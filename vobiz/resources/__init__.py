@@ -6,3 +6,5 @@ from .recordings import Recordings
 from .cdrs import CDRs
 from .numbers import PhoneNumbers
 from .endpoints import Endpoints
+from .sip_trunks import SipTrunks
+from .credentials import Credentials

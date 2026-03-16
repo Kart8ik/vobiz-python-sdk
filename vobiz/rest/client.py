@@ -27,6 +27,8 @@ from vobiz.resources import (
     CDRs,
     PhoneNumbers,
     Endpoints,
+    SipTrunks,
+    Credentials,
 )
 from vobiz.version import __version__
 from requests import Request, Session
@@ -107,6 +109,8 @@ class Client(object):
         self.cdrs = CDRs(self)
         self.phone_numbers = PhoneNumbers(self)
         self.endpoints = Endpoints(self)
+        self.sip_trunks = SipTrunks(self)
+        self.credentials = Credentials(self)
 
 
     def __enter__(self):
