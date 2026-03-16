@@ -1,0 +1,12 @@
+.coverage
+build/
+cover/
+dist/
+*.egg-info/
+.idea/
+*.pyc
+*.pyo
+./tests/htmlcov/
+.tox/
+venv*/
+python-sdk-test/
