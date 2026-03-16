@@ -1,10 +1,10 @@
 from unittest import TestCase
 
 from vobiz import vobizxml as plivoxml
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class ProsodyElementTest(TestCase, PlivoXmlTestCase):
+class ProsodyElementTest(TestCase, VobizXmlTestCase):
     def test_set_methods(self):
         expected_response = '<Response><Speak><prosody pitch="low" rate="x-high" volume="+6dB"><break ' \
                             'strength="strong" time="250ms"/><emphasis level="strong">' \

@@ -1,10 +1,10 @@
 from unittest import TestCase
 
 from vobiz import vobizxml as plivoxml
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class HangupElementTest(TestCase, PlivoXmlTestCase):
+class HangupElementTest(TestCase, VobizXmlTestCase):
     def test_set_methods(self):
         schedule = 60
         reason = "rejected"

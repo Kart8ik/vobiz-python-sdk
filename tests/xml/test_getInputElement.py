@@ -1,9 +1,9 @@
 from unittest import TestCase
 from vobiz import vobizxml as plivoxml
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class GetInputElementTest(TestCase, PlivoXmlTestCase):
+class GetInputElementTest(TestCase, VobizXmlTestCase):
     def test_set_methods(self):
         expected_response = '<Response><GetInput action="https://foo.example.com" digitEndTimeout="50" ' \
                             'executionTimeout="100" finishOnKey="#" hints="1 2 3" inputType="speech" ' \

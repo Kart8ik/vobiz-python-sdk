@@ -1,10 +1,10 @@
 from unittest import TestCase
 
 from vobiz import vobizxml as plivoxml
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class PlayElementTest(TestCase, PlivoXmlTestCase):
+class PlayElementTest(TestCase, VobizXmlTestCase):
     def test_set_methods(self):
         expected_response = '<Response><Play loop="1">This is test</Play></Response>'
 

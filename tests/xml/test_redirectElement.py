@@ -1,10 +1,10 @@
 from unittest import TestCase
 
 from vobiz import vobizxml as plivoxml
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class RedirectElementTest(TestCase, PlivoXmlTestCase):
+class RedirectElementTest(TestCase, VobizXmlTestCase):
     def test_set_methods(self):
         expected_response = '<Response><Redirect method="POST">This is Test</Redirect></Response>'
 

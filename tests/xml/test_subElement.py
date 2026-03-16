@@ -1,10 +1,10 @@
 from unittest import TestCase
 
 from vobiz import vobizxml as plivoxml
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class SubElementTest(TestCase, PlivoXmlTestCase):
+class SubElementTest(TestCase, VobizXmlTestCase):
     def test_set_methods(self):
         expected_response = '<Response><Speak>substitution example <sub alias="World Wide Web Consortium">W3C</sub></Speak></Response>'
         alias="World Wide Web Consortium"

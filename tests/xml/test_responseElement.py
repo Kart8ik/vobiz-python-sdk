@@ -3,10 +3,10 @@
 from unittest import TestCase
 
 from vobiz import vobizxml as plivoxml
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class ResponseElementTest(TestCase, PlivoXmlTestCase):
+class ResponseElementTest(TestCase, VobizXmlTestCase):
     def test_create_response(self):
         self.assertXmlEqual(plivoxml.ResponseElement().to_string(False),
                             '<Response/>')

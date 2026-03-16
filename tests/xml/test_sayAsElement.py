@@ -1,10 +1,10 @@
 from unittest import TestCase
 
 from vobiz import vobizxml as plivoxml
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class SayAsElementTest(TestCase, PlivoXmlTestCase):
+class SayAsElementTest(TestCase, VobizXmlTestCase):
     def test_set_methods(self):
         expected_response = '<Response><Speak><say-as format="application/ssml+xml" interpret-as="spell-out">' \
                             'This is Test</say-as></Speak></Response>'

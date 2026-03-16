@@ -1,10 +1,10 @@
 from unittest import TestCase
 
 from vobiz import vobizxml as plivoxml
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class ElementTest(TestCase, PlivoXmlTestCase):
+class ElementTest(TestCase, VobizXmlTestCase):
     def test_set_methods(self):
         alphabet = "ipa"
         ph = "t&#x259;mei&#x325;&#x27E;ou&#x325;"

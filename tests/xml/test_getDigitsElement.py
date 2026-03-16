@@ -1,9 +1,9 @@
 from unittest import TestCase
 from vobiz import vobizxml as plivoxml
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class GetDigitsElementTest(TestCase, PlivoXmlTestCase):
+class GetDigitsElementTest(TestCase, VobizXmlTestCase):
     def test_set_methods(self):
         expected_response = '<Response><GetDigits action="https://foo.example.com" digitTimeout="10"' \
             ' finishOnKey="#" invalidDigitsSound="http://foo.audio.url" log="true" method="GET"' \

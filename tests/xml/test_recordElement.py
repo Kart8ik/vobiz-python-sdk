@@ -1,9 +1,9 @@
 from unittest import TestCase
 from vobiz import vobizxml as plivoxml
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class RecordElementTest(TestCase, PlivoXmlTestCase):
+class RecordElementTest(TestCase, VobizXmlTestCase):
     def test_set_methods(self):
         expected_response = '<Response><Record action="https://foo.example.com" callbackMethod="GET" ' \
                             'callbackUrl="https://foo.example.com" fileFormat="wav" finishOnKey="#" ' \

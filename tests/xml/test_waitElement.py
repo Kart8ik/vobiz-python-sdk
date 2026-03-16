@@ -1,10 +1,10 @@
 from unittest import TestCase
 
 from vobiz import vobizxml as plivoxml
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class WaitElementTest(TestCase, PlivoXmlTestCase):
+class WaitElementTest(TestCase, VobizXmlTestCase):
     def test_set_methods(self):
         expected_response = '<Response><Wait beep="true" length="1" minSilence="1" silence="true"/></Response>'
 

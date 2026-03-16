@@ -1,10 +1,10 @@
 from unittest import TestCase
 
 from vobiz import vobizxml as plivoxml
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class ConferenceElementTest(TestCase, PlivoXmlTestCase):
+class ConferenceElementTest(TestCase, VobizXmlTestCase):
     def test_set_methods(self):
         expected_response = '<Response><Conference action="http://foo.com/get_recording/" callbackMethod="GET"' \
                             ' callbackUrl="http://foo.com/sms_status/" digitsMatch="#0,99,000"' \

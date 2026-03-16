@@ -1,10 +1,10 @@
 from unittest import TestCase
 
 from vobiz import vobizxml as plivoxml
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class BreakElementTest(TestCase, PlivoXmlTestCase):
+class BreakElementTest(TestCase, VobizXmlTestCase):
     def test_set_methods(self):
         time = "1000ms"
         strength = "x-strong"

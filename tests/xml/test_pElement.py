@@ -1,10 +1,10 @@
 from unittest import TestCase
 
 from vobiz import vobizxml as plivoxml
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class PElementTest(TestCase, PlivoXmlTestCase):
+class PElementTest(TestCase, VobizXmlTestCase):
     def test_set_methods(self):
         expected_response = '<Response><Speak><p><break strength="strong" time="250ms"/>' \
                             '<emphasis level="strong">This is Test</emphasis><lang xml:lang="it">' \

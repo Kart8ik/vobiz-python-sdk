@@ -1,112 +1,59 @@
 # -*- coding: utf-8 -*-
 """
-Account & Subaccount classes - along with their list classes
+Vobiz Accounts resource.
+
+Implements only the endpoints defined in the Vobiz accounts documentation.
 """
 
-from vobiz.base import (ListResponseObject,
-                        PlivoResource,
-                        PlivoResourceInterface)
-from vobiz.utils import to_param_dict
-from vobiz.utils.validators import *
+VOBIZ_API_V1 = "https://api.vobiz.ai/api/v1"
 
 
-class Subaccount(PlivoResource):
-    _name = 'Subaccount'
-    _identifier_string = 'auth_id'
+class Accounts:
+    def __init__(self, client):
+        self.client = client
 
-    def update(self, name, enabled=False):
-        return self.client.subaccounts.update(self.id, name, enabled)
-
-    def delete(self, cascade=None):
-        return self.client.subaccounts.delete(self.id, cascade)
-
-
-class Subaccounts(PlivoResourceInterface):
-    _resource_type = Subaccount
-
-    @validate_args(auth_id=[is_subaccount_id()])
-    def get(self, auth_id):
-        return self.client.request(
-            'GET', ('Subaccount', auth_id), response_type=Subaccount)
-
-    @validate_args(
-        name=[of_type(six.text_type)], enabled=[of_type_exact(bool)])
-    def create(self, name, enabled=False):
-        return self.client.request(
-            'POST', ('Subaccount', ),
-            to_param_dict(self.create, locals()),
-            response_type=Subaccount)
-
-    @validate_args(
-        auth_id=[is_subaccount_id()],
-        name=[of_type(six.text_type)],
-        enabled=[optional(of_type_exact(bool))])
-    def update(self, auth_id, name, enabled=False):
-        return self.client.request('POST', ('Subaccount', auth_id),
-                                   to_param_dict(self.update, locals()))
-
-    @validate_args(
-        limit=[
-            optional(
-                all_of(
-                    of_type(*six.integer_types),
-                    check(lambda limit: 0 < limit <= 20, '0 < limit <= 20')))
-        ],
-        offset=[
-            optional(
-                all_of(
-                    of_type(*six.integer_types),
-                    check(lambda offset: 0 <= offset, '0 <= offset')))
-        ])
-    def list(self, limit=20, offset=0):
-        return self.client.request(
-            'GET', ('Subaccount', ),
-            to_param_dict(self.list, locals()),
-            response_type=ListResponseObject,
-            objects_type=Subaccount)
-
-    @validate_args(
-        auth_id=[is_subaccount_id()],
-        cascade=[
-            optional(of_type_exact(bool))
-        ])
-    def delete(self, auth_id, cascade=None):
-        return self.client.request(
-            'DELETE', ('Subaccount', auth_id),
-            to_param_dict(self.delete, locals())
+    def get(self):
+        """
+        GET https://api.vobiz.ai/api/v1/auth/me
+        """
+        url = f"{VOBIZ_API_V1}/auth/me"
+        resp = self.client.session.get(
+            url, timeout=self.client.timeout, proxies=self.client.proxies
         )
+        return self.client.process_response("GET", resp)
 
+    def get_transactions(self, account_id, limit=None, offset=None):
+        """
+        GET https://api.vobiz.ai/api/v1/account/{account_id}/transactions
+        """
+        url = f"{VOBIZ_API_V1}/account/{account_id}/transactions"
+        params = {}
+        if limit is not None:
+            params["limit"] = limit
+        if offset is not None:
+            params["offset"] = offset
+        resp = self.client.session.get(
+            url, params=params, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("GET", resp)
 
-class Account(PlivoResource):
-    _name = 'Account'
-    _identifier_string = 'auth_id'
+    def get_balance(self, account_id, currency):
+        """
+        GET https://api.vobiz.ai/api/v1/account/{account_id}/balance/{currency}
+        """
+        url = f"{VOBIZ_API_V1}/account/{account_id}/balance/{currency}"
+        resp = self.client.session.get(
+            url, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("GET", resp)
 
-    def get(self):
-        return self.client.account.get()
-
-    def update(self, name=None, city=None, address=None):
-        id = self.id
-        self.__dict__.update(to_param_dict(self.update, locals()))
-        return self.client.account.update(*to_param_dict(
-            self.update, locals()))
-
-
-class Accounts(PlivoResourceInterface):
-    _resource_type = Account
-
-    def get(self):
-        return self.client.request('GET', tuple(), response_type=Account)
-
-    @validate_args(
-        name=[optional(of_type(six.text_type))],
-        city=[optional(of_type(six.text_type))],
-        address=[optional(of_type(six.text_type))])
-    def update(self, name=None, city=None, address=None):
-        if not (name or city or address):
-            raise ValidationError(
-                'One parameter of name, city and address is required')
-        return self.client.request(
-            'POST', tuple(), {'name': name,
-                              'city': city,
-                              'address': address})
+    def get_concurrency(self, account_id):
+        """
+        GET https://api.vobiz.ai/api/v1/account/{account_id}/concurrency
+        """
+        url = f"{VOBIZ_API_V1}/account/{account_id}/concurrency"
+        resp = self.client.session.get(
+            url, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("GET", resp)
 

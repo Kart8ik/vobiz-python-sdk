@@ -2,10 +2,10 @@ from unittest import TestCase
 
 from vobiz import vobizxml as plivoxml
 from vobiz.exceptions import ValidationError
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class StreamElementTest(TestCase, PlivoXmlTestCase):
+class StreamElementTest(TestCase, VobizXmlTestCase):
     def test_set_methods(self):
         expected_response = """<Response>
                                     <Stream bidirectional="true" extraHeaders="a=1,b=2" keepCallAlive="true">wss://test.url</Stream>

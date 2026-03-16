@@ -1,10 +1,10 @@
 from unittest import TestCase
 from vobiz import vobizxml as plivoxml
 from vobiz.exceptions import ValidationError
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class MultiPartyCallElementTest(TestCase, PlivoXmlTestCase):
+class MultiPartyCallElementTest(TestCase, VobizXmlTestCase):
 
     def test_default_xml(self):
 

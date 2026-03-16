@@ -1,10 +1,10 @@
 from unittest import TestCase
 
 from vobiz import vobizxml as plivoxml
-from tests import PlivoXmlTestCase
+from tests import VobizXmlTestCase
 
 
-class NumberElementTest(TestCase, PlivoXmlTestCase):
+class NumberElementTest(TestCase, VobizXmlTestCase):
     def test_set_methods(self):
         expected_response = '<Response><Dial><Number sendDigits="wwww2410" sendDigitsMode=""' \
                             ' sendOnPreanswer="true">This is Test</Number></Dial></Response>'

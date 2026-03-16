@@ -18,7 +18,7 @@ from vobiz.exceptions import (
     ValidationError,
     ForbiddenError,
 )
-from vobiz.resources import Calls
+from vobiz.resources import Calls, Accounts, Subaccounts
 from vobiz.utils import is_valid_mainaccount, is_valid_subaccount
 from vobiz.version import __version__
 from requests import Request, Session
@@ -92,6 +92,8 @@ class Client(object):
         self.proxies = proxies
         self.timeout = timeout
         self.calls = Calls(self)
+        self.accounts = Accounts(self)
+        self.subaccounts = Subaccounts(self)
 
 
     def __enter__(self):
