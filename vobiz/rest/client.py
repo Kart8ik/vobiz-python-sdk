@@ -18,8 +18,7 @@ from vobiz.exceptions import (
     ValidationError,
     ForbiddenError,
 )
-from vobiz.resources import Calls, Accounts, Subaccounts
-from vobiz.utils import is_valid_mainaccount, is_valid_subaccount
+from vobiz.resources import Calls, Accounts, Subaccounts, Applications, Recordings, CDRs
 from vobiz.version import __version__
 from requests import Request, Session
 
@@ -94,6 +93,9 @@ class Client(object):
         self.calls = Calls(self)
         self.accounts = Accounts(self)
         self.subaccounts = Subaccounts(self)
+        self.applications = Applications(self)
+        self.recordings = Recordings(self)
+        self.cdrs = CDRs(self)
 
 
     def __enter__(self):

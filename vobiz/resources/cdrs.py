@@ -3,9 +3,9 @@ from typing import Any, Dict, Optional
 VOBIZ_API_V1 = "https://api.vobiz.ai/api/v1"
 
 
-class Recordings:
+class CDRs:
     """
-    Vobiz Recordings resource.
+    Vobiz Call Detail Records (CDRs) resource.
 
     All endpoints are scoped to the authenticated account.
     """
@@ -22,26 +22,26 @@ class Recordings:
         self,
         page: Optional[int] = None,
         size: Optional[int] = None,
-        call_id: Optional[str] = None,
         from_number: Optional[str] = None,
         to_number: Optional[str] = None,
+        direction: Optional[str] = None,
         **filters: Any,
     ):
         """
-        GET /api/v1/accounts/{account_id}/recordings/
+        GET /api/v1/accounts/{account_id}/cdrs/
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/recordings/"
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/cdrs/"
         params: Dict[str, Any] = {}
         if page is not None:
             params["page"] = page
         if size is not None:
             params["size"] = size
-        if call_id is not None:
-            params["call_id"] = call_id
         if from_number is not None:
             params["from"] = from_number
         if to_number is not None:
             params["to"] = to_number
+        if direction is not None:
+            params["direction"] = direction
         # allow arbitrary extra server-side filters
         params.update(filters)
 
@@ -50,22 +50,13 @@ class Recordings:
         )
         return self.client.process_response("GET", resp)
 
-    def get(self, recording_id: str):
+    def get(self, cdr_id: str):
         """
-        GET /api/v1/accounts/{account_id}/recordings/{recording_id}
+        GET /api/v1/accounts/{account_id}/cdrs/{cdr_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/recordings/{recording_id}"
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/cdrs/{cdr_id}"
         resp = self.client.session.get(
             url, timeout=self.client.timeout, proxies=self.client.proxies
         )
         return self.client.process_response("GET", resp)
 
-    def delete(self, recording_id: str):
-        """
-        DELETE /api/v1/accounts/{account_id}/recordings/{recording_id}
-        """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/recordings/{recording_id}"
-        resp = self.client.session.delete(
-            url, timeout=self.client.timeout, proxies=self.client.proxies
-        )
-        return self.client.process_response("DELETE", resp)

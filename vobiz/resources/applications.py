@@ -1,207 +1,111 @@
-# -*- coding: utf-8 -*-
-"""
-Application class - along with its list class
-"""
+from typing import Any, Dict, Optional
 
-from vobiz.base import (ListResponseObject, PlivoResource,
-                        PlivoResourceInterface)
-from vobiz.resources.accounts import Subaccount
-from vobiz.utils import to_param_dict
-from vobiz.utils.validators import *
+VOBIZ_API_V1 = "https://api.vobiz.ai/api/v1"
 
 
-class Application(PlivoResource):
-    _name = 'Application'
-    _identifier_string = 'app_id'
+class Applications:
+    """
+    Vobiz Applications resource.
 
-    def update(self,
-               answer_url,
-               answer_method='POST',
-               hangup_url=None,
-               hangup_method='POST',
-               fallback_answer_url=None,
-               fallback_method='POST',
-               message_url=None,
-               message_method='POST',
-               default_number_app=False,
-               default_endpoint_app=False,
-               subaccount=None,
-			   log_incoming_messages=True,
-               public_uri=None):
-        params = to_param_dict(self.update, locals())
-        self.__dict__.update(params)
-        return self.client.applications.update(self.id, **params)
+    All endpoints are scoped to the authenticated account.
+    """
 
-    def delete(self, cascade=None, new_endpoint_application=None):
-        return self.client.applications.delete(self.id, cascade, new_endpoint_application)
+    def __init__(self, client):
+        self.client = client
 
-    def get(self):
-        resp = self.client.applications.get()
-        self.__dict__.update(resp.__dict__)
-        return resp
+    @property
+    def _account_id(self) -> str:
+        # For Vobiz, we treat the RestClient auth_id as the account_id
+        return self.client.auth_id
 
-
-class Applications(PlivoResourceInterface):
-    _resource_type = Application
-
-    @validate_args(
-        app_name=[of_type(six.text_type)],
-        answer_url=[optional(is_url())],
-        answer_method=[optional(of_type(six.text_type))],
-        hangup_url=[optional(is_url())],
-        hangup_method=[optional(of_type(six.text_type))],
-        fallback_answer_url=[optional(is_url())],
-        fallback_method=[optional(of_type(six.text_type))],
-        message_url=[optional(is_url())],
-        message_method=[optional(of_type(six.text_type))],
-        default_number_app=[optional(of_type_exact(bool))],
-        default_endpoint_app=[optional(of_type_exact(bool))],
-        subaccount=[optional(is_subaccount())],
-        log_incoming_messages=[optional(of_type_exact(bool))],
-        public_uri=[optional(of_type_exact(bool))],
-        callback_url=[optional(is_url())],
-        callback_method=[optional(of_type(six.text_type))],
-    )
-    def create(self,
-               app_name,
-               answer_url=None,
-               answer_method='POST',
-               hangup_url=None,
-               hangup_method='POST',
-               fallback_answer_url=None,
-               fallback_method='POST',
-               message_url=None,
-               message_method='POST',
-               default_number_app=False,
-               default_endpoint_app=False,
-               subaccount=None,
-               log_incoming_messages=True,
-               public_uri=None,
-               callback_url=None,
-               callback_method=None):
-
-        if subaccount:
-            if isinstance(subaccount, Subaccount):
-                subaccount = subaccount.id
-        return self.client.request('POST', ('Application', ), to_param_dict(self.create, locals()), is_voice_request=True)
-
-    @validate_args(app_id=[of_type(six.text_type)],
-                   callback_url=[optional(is_url())],
-                   callback_method=[optional(of_type(six.text_type))],
-                   )
-    def get(self, app_id, callback_url=None, callback_method=None):
-        if not callback_url:
-            return self.client.request(
-                'GET', ('Application', app_id), response_type=Application, is_voice_request=True)
-        else:
-            return self.client.request(
-                'GET', ('Application', app_id), to_param_dict(self.get, locals()),
-                response_type=Application, is_voice_request=True)
-
-    @validate_args(
-        subaccount=[optional(is_subaccount())],
-        limit=[
-            optional(
-                all_of(
-                    of_type(*six.integer_types),
-                    check(lambda limit: 0 < limit <= 20, '0 < limit <= 20')))
-        ],
-        offset=[
-            optional(
-                all_of(
-                    of_type(*six.integer_types),
-                    check(lambda offset: 0 <= offset, '0 <= offset')))
-        ],
-        callback_url=[optional(is_url())],
-        callback_method=[optional(of_type(six.text_type))],
-    )
-    def list(self, subaccount=None, limit=20, offset=0, callback_url=None, callback_method=None, app_name=None):
-        if subaccount:
-            if isinstance(subaccount, Subaccount):
-                subaccount = subaccount.id
-
-        if not callback_url:
-            return self.client.request(
-                'GET', ('Application',),
-                to_param_dict(self.list, locals()),
-                response_type=ListResponseObject,
-                objects_type=Application, is_voice_request=True)
-        else:
-            return self.client.request(
-                'GET', ('Application',),
-                to_param_dict(self.list, locals()),
-                objects_type=Application, is_voice_request=True)
-
-    @validate_args(
-        app_id=[of_type(six.text_type)],
-        answer_url=[optional(is_url())],
-        answer_method=[optional(of_type(six.text_type))],
-        hangup_url=[optional(is_url())],
-        hangup_method=[optional(of_type(six.text_type))],
-        fallback_answer_url=[optional(is_url())],
-        fallback_method=[optional(of_type(six.text_type))],
-        message_url=[optional(is_url())],
-        message_method=[optional(of_type(six.text_type))],
-        default_number_app=[optional(of_type_exact(bool))],
-        default_endpoint_app=[optional(of_type_exact(bool))],
-        subaccount=[optional(is_subaccount())],
-        log_incoming_messages=[optional(of_type_exact(bool))],
-        public_uri=[optional(of_type_exact(bool))],
-        callback_url=[optional(is_url())],
-        callback_method=[optional(of_type(six.text_type))],
-    )
-    def update(self,
-               app_id,
-               answer_url=None,
-               answer_method='POST',
-               hangup_url=None,
-               hangup_method='POST',
-               fallback_answer_url=None,
-               fallback_method='POST',
-               message_url=None,
-               message_method='POST',
-               default_number_app=False,
-               default_endpoint_app=False,
-               subaccount=None,
-               log_incoming_messages=True,
-               public_uri=None,
-               callback_url=None,
-               callback_method=None
-               ):
-        if subaccount:
-            if isinstance(subaccount, Subaccount):
-                subaccount = subaccount.id
-
-        # using localVariablesObject insteadof locals() because we need to remove app_id
-        # as there is no support to update app_id, there is no way to remove an variable from locals() dictionary
-        localVariablesObject = {
-            'self': self,
-            'answer_url': answer_url,
-            'answer_method': answer_method,
-            'hangup_url': hangup_url,
-            'hangup_method': hangup_method,
-            'fallback_answer_url': fallback_answer_url,
-            'fallback_method': fallback_method,
-            'message_url': message_url,
-            'message_method': message_method,
-            'default_number_app': default_number_app,
-            'default_endpoint_app': default_endpoint_app,
-            'subaccount': subaccount,
-            'log_incoming_messages': log_incoming_messages,
-            'public_uri': public_uri,
-            'callback_url': callback_url,
-            'callback_method': callback_method
+    def create(
+        self,
+        name: str,
+        answer_url: str,
+        answer_method: str = "POST",
+        hangup_url: Optional[str] = None,
+        hangup_method: str = "POST",
+        fallback_answer_url: Optional[str] = None,
+        fallback_method: str = "POST",
+        application_type: Optional[str] = None,
+        **extra: Any,
+    ):
+        """
+        POST /api/v1/accounts/{account_id}/applications/
+        """
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/applications/"
+        body: Dict[str, Any] = {
+            "name": name,
+            "answer_url": answer_url,
+            "answer_method": answer_method,
+            "hangup_method": hangup_method,
         }
-        return self.client.request('POST', ('Application', app_id),
-                                   to_param_dict(self.update, localVariablesObject), is_voice_request=True)
+        if hangup_url is not None:
+            body["hangup_url"] = hangup_url
+        if fallback_answer_url is not None:
+            body["fallback_answer_url"] = fallback_answer_url
+        if fallback_method is not None:
+            body["fallback_method"] = fallback_method
+        if application_type is not None:
+            body["application_type"] = application_type
+        # allow forward-compatible extra keys
+        body.update(extra)
 
-    @validate_args(
-        app_id=[of_type(six.text_type)],
-        new_endpoint_application=[optional(of_type(six.text_type))],
-        cascade=[optional(of_type_exact(bool))],
-        callback_url=[optional(is_url())],
-        callback_method=[optional(of_type(six.text_type))],
-    )
-    def delete(self, app_id, cascade=None, new_endpoint_application=None, callback_url=None, callback_method=None):
-        return self.client.request('DELETE', ('Application', app_id),
-                                   to_param_dict(self.delete, locals()), is_voice_request=True)
+        resp = self.client.session.post(
+            url, json=body, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("POST", resp)
+
+    def list(
+        self,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+        application_type: Optional[str] = None,
+    ):
+        """
+        GET /api/v1/accounts/{account_id}/applications/
+        """
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/applications/"
+        params: Dict[str, Any] = {}
+        if page is not None:
+            params["page"] = page
+        if size is not None:
+            params["size"] = size
+        if application_type is not None:
+            params["application_type"] = application_type
+
+        resp = self.client.session.get(
+            url, params=params, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("GET", resp)
+
+    def get(self, application_id: str):
+        """
+        GET /api/v1/accounts/{account_id}/applications/{application_id}
+        """
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/applications/{application_id}"
+        resp = self.client.session.get(
+            url, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("GET", resp)
+
+    def update(self, application_id: str, **params: Any):
+        """
+        PUT /api/v1/accounts/{account_id}/applications/{application_id}
+        """
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/applications/{application_id}"
+        body: Dict[str, Any] = dict(params)
+        resp = self.client.session.put(
+            url, json=body, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("PUT", resp)
+
+    def delete(self, application_id: str):
+        """
+        DELETE /api/v1/accounts/{account_id}/applications/{application_id}
+        """
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/applications/{application_id}"
+        resp = self.client.session.delete(
+            url, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("DELETE", resp)
