@@ -8,5 +8,5 @@ dist/
 *.pyo
 ./tests/htmlcov/
 .tox/
-venv*/
+.venv*/
 python-sdk-test/

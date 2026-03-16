@@ -1,4 +1,5 @@
-from .plivo import exceptions  # re-export
-from .plivo.rest import Client as RestClient  # temporary shim
-from .plivo import xml as vobizxml  # temporary shim
-
+# -*- coding: utf-8 -*-
+from . import exceptions
+from .rest import Client as RestClient
+from .rest import phlo
+from . import xml as vobizxml

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import json
-from plivo.base import (ListResponseObject)
-from plivo.exceptions import ValidationError
-from plivo.resources import MultiPartyCall, MultiPartyCallParticipant
-from plivo.utils.signature_v3 import construct_get_url
+from vobiz.base import (ListResponseObject)
+from vobiz.exceptions import ValidationError
+from vobiz.resources import MultiPartyCall, MultiPartyCallParticipant
+from vobiz.utils.signature_v3 import construct_get_url
 from tests.base import PlivoResourceTestCase
 from tests.decorators import with_response
 

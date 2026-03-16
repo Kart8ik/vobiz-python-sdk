@@ -1,4 +1,4 @@
-from plivo import exceptions
+from vobiz import exceptions
 from tests.base import PlivoResourceTestCase
 from tests.decorators import with_response
 

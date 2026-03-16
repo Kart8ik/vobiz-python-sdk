@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from vobiz import vobizxml as plivoxml
-from plivo.exceptions import ValidationError
+from vobiz.exceptions import ValidationError
 from tests import PlivoXmlTestCase
 
 

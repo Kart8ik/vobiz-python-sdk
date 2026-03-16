@@ -5,7 +5,7 @@ from lxml.doctestcompare import LXMLOutputChecker
 
 from httmock import HTTMock, all_requests
 
-from plivo import RestClient
+from vobiz import RestClient
 from plivo.rest.phlo_client import PhloClient as PhloRestClient
 
 

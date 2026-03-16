@@ -1,4 +1,4 @@
-from plivo.exceptions import ResourceNotFoundError, ValidationError,\
+from vobiz.exceptions import ResourceNotFoundError, ValidationError,\
                              PlivoServerError
 from tests.base import PlivoPhlosResourceTestCase
 from tests.decorators import with_response
