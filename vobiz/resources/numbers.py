@@ -1,141 +1,122 @@
-# -*- coding: utf-8 -*-
-"""
-Number & PhoneNumber classes - along with their list classes
-"""
+from typing import Any, Dict, Optional
 
-from vobiz.base import (ListResponseObject, PlivoResource,
-                        PlivoResourceInterface)
-from vobiz.utils import to_param_dict
-from vobiz.utils.validators import *
+VOBIZ_API_V1 = "https://api.vobiz.ai/api/v1"
 
 
-class Number(PlivoResource):
-    _name = 'Number'
-    _identifier_string = 'number'
+class PhoneNumbers:
+    """
+    Vobiz Phone Numbers resource.
 
-    def delete(self):
-        return self.client.numbers.delete(self.id)
+    All endpoints are scoped to the authenticated account.
+    """
 
-    def update(self,
-               app_id=None,
-               subaccount=None,
-               alias=None,
-               verification_info=None):
-        return self.client.numbers.update(self.id, app_id, subaccount, alias,
-                                          verification_info)
-
-
-class Numbers(PlivoResourceInterface):
     def __init__(self, client):
-        self._resource_type = Number
-        super(Numbers, self).__init__(client)
+        self.client = client
 
-    @validate_args(
-        number=[is_phonenumber()],
-        app_id=[optional(of_type(six.text_type))],
-        verification_info=[optional(of_type_exact(dict))],
-        cnam_lookup=[optional(of_type(six.text_type))],
-        ha_enable=[optional(of_type(bool))],)
-    def buy(self, number, app_id=None, verification_info=None, cnam_lookup=None, ha_enable=None):
-        return self.client.request('POST', ('PhoneNumber', number),
-                                   to_param_dict(self.buy, locals()))
+    @property
+    def _account_id(self) -> str:
+        # For Vobiz, we treat the RestClient auth_id as the account_id
+        return self.client.auth_id
 
-    def search(self,
-               country_iso,
-               type=None,
-               pattern=None,
-               region=None,
-               services=None,
-               lata=None,
-               rate_center=None,
-               limit=None,
-               offset=None,
-               eligible=None,
-               city=None,
-               npanxx=None,
-               local_calling_area=None):
-        return self.client.request('GET', ('PhoneNumber', ),
-                                   to_param_dict(self.search, locals()))
+    def search(
+        self,
+        country: str,
+        type: Optional[str] = None,
+        pattern: Optional[str] = None,
+        region: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+        **filters: Any,
+    ):
+        """
+        GET /api/v1/accounts/{account_id}/phone-numbers/search
+        """
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/phone-numbers/search"
+        params: Dict[str, Any] = {"country": country}
+        if type is not None:
+            params["type"] = type
+        if pattern is not None:
+            params["pattern"] = pattern
+        if region is not None:
+            params["region"] = region
+        if page is not None:
+            params["page"] = page
+        if size is not None:
+            params["size"] = size
+        params.update(filters)
 
-    @validate_args(
-        services=[
-            optional(
-                is_iterable(
-                    all_of(of_type(six.text_type), is_in(('sms', 'voice', 'mms'))),
-                    sep=','))
-        ],
-        limit=[
-            optional(
-                all_of(
-                    of_type(*six.integer_types),
-                    check(lambda limit: 0 < limit <= 20, '0 < limit <= 20')))
-        ],
-        offset=[
-            optional(
-                all_of(
-                    of_type(*six.integer_types),
-                    check(lambda offset: 0 <= offset, '0 <= offset')))
-        ])
-    def list(self,
-             type=None,
-             number_startswith=None,
-             subaccount=None,
-             alias=None,
-             services=None,
-             tendlc_registration_status=None,
-             tendlc_campaign_id=None,
-             toll_free_sms_verification=None,
-             renewal_date=None,
-             renewal_date__lte=None,
-             renewal_date__lt=None,
-             renewal_date__gte=None,
-             renewal_date__gt=None,
-             cnam_lookup=None,
-             toll_free_sms_verification_order_status=None,
-             limit=20,
-             offset=0):
-        return self.client.request(
-            'GET',
-            ('Number', ),
-            to_param_dict(self.list, locals()),
-            objects_type=Number,
-            response_type=ListResponseObject, )
+        resp = self.client.session.get(
+            url, params=params, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("GET", resp)
 
-    @validate_args(number=[is_phonenumber()])
-    def get(self, number):
-        return self.client.request(
-            'GET', ('Number', number), response_type=Number)
+    def buy(self, phone_number: str, application_id: Optional[str] = None, **extra: Any):
+        """
+        POST /api/v1/accounts/{account_id}/phone-numbers/
+        """
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/phone-numbers/"
+        body: Dict[str, Any] = {"phone_number": phone_number}
+        if application_id is not None:
+            body["application_id"] = application_id
+        body.update(extra)
 
-    @validate_args(
-        numbers=[
-            one_of(
-                is_iterable(of_type(six.text_type), sep=','),
-                of_type(six.text_type))
-        ],
-        carrier=[of_type(six.text_type)],
-        region=[of_type(six.text_type)],
-        number_type=[optional(of_type(six.text_type))],
-        app_id=[optional(of_type(six.text_type))],
-        subaccount=[optional(is_subaccount())])
-    def create(self,
-               numbers,
-               carrier,
-               region,
-               number_type=None,
-               app_id=None,
-               subaccount=None):
-        return self.client.request('POST', ('Number', ),
-                                   to_param_dict(self.create, locals()))
+        resp = self.client.session.post(
+            url, json=body, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("POST", resp)
 
-    def update(self,
-               number,
-               app_id=None,
-               subaccount=None,
-               alias=None,
-               verification_info=None,
-               cnam_lookup=None,):
-        return self.client.request('POST', ('Number', number),
-                                   to_param_dict(self.update, locals()))
+    def list(
+        self,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+        application_id: Optional[str] = None,
+        **filters: Any,
+    ):
+        """
+        GET /api/v1/accounts/{account_id}/phone-numbers/
+        """
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/phone-numbers/"
+        params: Dict[str, Any] = {}
+        if page is not None:
+            params["page"] = page
+        if size is not None:
+            params["size"] = size
+        if application_id is not None:
+            params["application_id"] = application_id
+        params.update(filters)
 
-    def delete(self, number):
-        return self.client.request('DELETE', ('Number', number))
+        resp = self.client.session.get(
+            url, params=params, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("GET", resp)
+
+    def get(self, phone_number_id: str):
+        """
+        GET /api/v1/accounts/{account_id}/phone-numbers/{phone_number_id}
+        """
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/phone-numbers/{phone_number_id}"
+        resp = self.client.session.get(
+            url, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("GET", resp)
+
+    def update(self, phone_number_id: str, **params: Any):
+        """
+        PUT /api/v1/accounts/{account_id}/phone-numbers/{phone_number_id}
+        """
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/phone-numbers/{phone_number_id}"
+        body: Dict[str, Any] = dict(params)
+        resp = self.client.session.put(
+            url, json=body, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("PUT", resp)
+
+    def delete(self, phone_number_id: str):
+        """
+        DELETE /api/v1/accounts/{account_id}/phone-numbers/{phone_number_id}
+        """
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/phone-numbers/{phone_number_id}"
+        resp = self.client.session.delete(
+            url, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("DELETE", resp)

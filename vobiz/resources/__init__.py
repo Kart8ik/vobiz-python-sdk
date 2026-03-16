@@ -4,3 +4,5 @@ from .calls import Calls
 from .applications import Applications
 from .recordings import Recordings
 from .cdrs import CDRs
+from .numbers import PhoneNumbers
+from .endpoints import Endpoints

@@ -1,107 +1,102 @@
-# -*- coding: utf-8 -*-
-from vobiz.utils import to_param_dict
-from vobiz.utils.validators import *
+from typing import Any, Dict, Optional
 
-from ..base import ListResponseObject, PlivoResource, PlivoResourceInterface
+VOBIZ_API_V1 = "https://api.vobiz.ai/api/v1"
 
 
-class Endpoint(PlivoResource):
-    _name = 'Endpoint'
-    _identifier_string = 'endpoint_id'
+class Endpoints:
+    """
+    Vobiz Endpoints (SIP endpoints / devices) resource.
 
-    @validate_args(
-        password=[of_type(six.text_type)],
-        alias=[of_type(six.text_type)],
-        app_id=[optional(of_type(six.text_type))])
-    def update(self, password=None, alias=None, app_id=None):
-        params = to_param_dict(self.update, locals())
-        self.__dict__.update(params)
-        return self.client.endpoints.update(self.id, **params)
+    All endpoints are scoped to the authenticated account.
+    """
 
-    def delete(self):
-        return self.client.endpoints.delete(self.id)
+    def __init__(self, client):
+        self.client = client
 
+    @property
+    def _account_id(self) -> str:
+        # For Vobiz, we treat the RestClient auth_id as the account_id
+        return self.client.auth_id
 
-class Endpoints(PlivoResourceInterface):
-    _resource_type = Endpoint
-
-    @validate_args(
-        username=[of_type(six.text_type)],
-        password=[of_type(six.text_type)],
-        alias=[of_type(six.text_type)],
-        app_id=[optional(of_type(six.text_type))],
-        callback_url=[optional(is_url())],
-        callback_method=[optional(of_type(six.text_type))],
-    )
-    def create(self, username, password, alias, app_id=None, callback_url=None, callback_method=None):
-        return self.client.request('POST', ('Endpoint', ),
-                                   to_param_dict(self.create, locals()), is_voice_request=True)
-
-    @validate_args(endpoint_id=[of_type(six.text_type)],
-                   callback_url=[optional(is_url())],
-                   callback_method=[optional(of_type(six.text_type))],
-                   )
-    def get(self, endpoint_id, callback_url=None, callback_method=None):
-        return self.client.request('GET', ('Endpoint', endpoint_id), to_param_dict(self.get, locals()), is_voice_request=True)
-
-    @validate_args(
-        limit=[
-            optional(
-                all_of(
-                    of_type(*six.integer_types),
-                    check(lambda limit: 0 < limit <= 20, '0 < limit <= 20')))
-                ],
-        offset=[
-            optional(
-                all_of(
-                    of_type(*six.integer_types),
-                    check(lambda offset: 0 <= offset, '0 <= offset')))
-        ],
-        callback_url=[optional(is_url())],
-        callback_method=[optional(of_type(six.text_type))],
-    )
-    def list(self, limit=20, offset=0, callback_url=None, callback_method=None):
-        if callback_url:
-            return self.client.request(
-                'GET',
-                ('Endpoint',),
-                to_param_dict(self.list, locals()),
-                objects_type=Endpoint, is_voice_request=True)
-        else:
-            return self.client.request(
-                'GET',
-                ('Endpoint',),
-                to_param_dict(self.list, locals()),
-                objects_type=Endpoint,
-                response_type=ListResponseObject, is_voice_request=True)
-
-
-    @validate_args(
-        endpoint_id=[of_type(six.text_type)],
-        password=[optional(of_type(six.text_type))],
-        alias=[optional(of_type(six.text_type))],
-        app_id=[optional(of_type(six.text_type))],
-        callback_url=[optional(is_url())],
-        callback_method=[optional(of_type(six.text_type))],
-    )
-    def update(self, endpoint_id, password=None, alias=None, app_id=None, callback_url=None, callback_method=None):
-
-        # not using locals() because we need to neglect endpoint_id
-        temp = {
-            'self': self,
-            'password': password,
-            'alias': alias,
-            'app_id': app_id,
-            'callback_url': callback_url,
-            "callback_method": callback_method
+    def create(
+        self,
+        username: str,
+        password: str,
+        alias: Optional[str] = None,
+        application_id: Optional[str] = None,
+        **extra: Any,
+    ):
+        """
+        POST /api/v1/accounts/{account_id}/endpoints/
+        """
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/endpoints/"
+        body: Dict[str, Any] = {
+            "username": username,
+            "password": password,
         }
-        return self.client.request('POST', ('Endpoint', endpoint_id),
-                                   to_param_dict(self.update, temp), is_voice_request=True)
+        if alias is not None:
+            body["alias"] = alias
+        if application_id is not None:
+            body["application_id"] = application_id
+        body.update(extra)
 
-    @validate_args(endpoint_id=[of_type(six.text_type)],
-                   callback_url=[optional(is_url())],
-                   callback_method=[optional(of_type(six.text_type))],
-                   )
-    def delete(self, endpoint_id, callback_url=None, callback_method=None):
-        return self.client.request('DELETE', ('Endpoint', endpoint_id), to_param_dict(self.delete, locals()),
-                                   is_voice_request=True)
+        resp = self.client.session.post(
+            url, json=body, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("POST", resp)
+
+    def list(
+        self,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+        application_id: Optional[str] = None,
+        **filters: Any,
+    ):
+        """
+        GET /api/v1/accounts/{account_id}/endpoints/
+        """
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/endpoints/"
+        params: Dict[str, Any] = {}
+        if page is not None:
+            params["page"] = page
+        if size is not None:
+            params["size"] = size
+        if application_id is not None:
+            params["application_id"] = application_id
+        params.update(filters)
+
+        resp = self.client.session.get(
+            url, params=params, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("GET", resp)
+
+    def get(self, endpoint_id: str):
+        """
+        GET /api/v1/accounts/{account_id}/endpoints/{endpoint_id}
+        """
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/endpoints/{endpoint_id}"
+        resp = self.client.session.get(
+            url, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("GET", resp)
+
+    def update(self, endpoint_id: str, **params: Any):
+        """
+        PUT /api/v1/accounts/{account_id}/endpoints/{endpoint_id}
+        """
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/endpoints/{endpoint_id}"
+        body: Dict[str, Any] = dict(params)
+        resp = self.client.session.put(
+            url, json=body, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("PUT", resp)
+
+    def delete(self, endpoint_id: str):
+        """
+        DELETE /api/v1/accounts/{account_id}/endpoints/{endpoint_id}
+        """
+        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/endpoints/{endpoint_id}"
+        resp = self.client.session.delete(
+            url, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("DELETE", resp)

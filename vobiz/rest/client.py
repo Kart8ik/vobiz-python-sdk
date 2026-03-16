@@ -18,7 +18,16 @@ from vobiz.exceptions import (
     ValidationError,
     ForbiddenError,
 )
-from vobiz.resources import Calls, Accounts, Subaccounts, Applications, Recordings, CDRs
+from vobiz.resources import (
+    Calls,
+    Accounts,
+    Subaccounts,
+    Applications,
+    Recordings,
+    CDRs,
+    PhoneNumbers,
+    Endpoints,
+)
 from vobiz.version import __version__
 from requests import Request, Session
 
@@ -96,6 +105,8 @@ class Client(object):
         self.applications = Applications(self)
         self.recordings = Recordings(self)
         self.cdrs = CDRs(self)
+        self.phone_numbers = PhoneNumbers(self)
+        self.endpoints = Endpoints(self)
 
 
     def __enter__(self):
