@@ -1,145 +1,166 @@
-# -*- coding: utf-8 -*-
+import json
 
-from tests.base import PlivoResourceTestCase
-from tests.decorators import with_response
-
-uuid = '4d04c52e-cea3-4458-bbdb-0bfc314ee7cd'
+import vobiz
 
 
-class CallTest(PlivoResourceTestCase):
-    @with_response(503)
-    @with_response(503)
-    @with_response(201)
-    def test_create(self):
-        self.client.calls.create(
-            from_='1231231230',
-            to_='3213213210',
-            answer_url='http://www.example.com')
-        self.assertEqual(self.client.current_request.method, 'POST')
-        self.assertUrlEqual(
-            self.get_voice_url('Call'), self.client.current_request.url)
+def _capture(monkeypatch):
+    captured = {}
 
-    @with_response(200)
-    def test_list(self):
-        self.client.calls.list()
-        self.assertEqual(self.client.current_request.method, 'GET')
-        self.assertUrlEqual(
-            self.get_voice_url('Call', limit=20, offset=0),
-            self.client.current_request.url)
+    def capture_send(self, request, **kwargs):
+        captured["request"] = request
+        from requests import Response
 
-    @with_response(200)
-    def test_get(self):
-        uuid = '4d04c52e-cea3-4458-bbdb-0bfc314ee7cd'
-        call = self.client.calls.get(uuid)
-        self.assertResponseMatches(call)
-        self.assertEqual(self.client.current_request.method, 'GET')
-        self.assertUrlEqual(
-            self.get_voice_url('Call', uuid) + 'call_uuid=' + uuid, self.client.current_request.url)
+        resp = Response()
+        resp.status_code = 200
+        resp._content = b"{}"
+        resp.headers["Content-Type"] = "application/json"
+        return resp
 
-    @with_response(202)
-    def test_update(self):
-        uuid = '4d04c52e-cea3-4458-bbdb-0bfc314ee7cd'
-        self.client.calls.update(
-            uuid, legs='aleg', aleg_url='http://www.example.com')
-        self.assertEqual(self.client.current_request.method, 'POST')
-        self.assertUrlEqual(
-            self.get_voice_url('Call', uuid), self.client.current_request.url)
+    monkeypatch.setattr("requests.sessions.Session.send", capture_send, raising=True)
+    return captured
 
 
-class LiveCallTest(PlivoResourceTestCase):
-    @with_response(202)
-    def test_play_create(self):
-        self.client.calls.play(uuid, 'http://test.url')
-        self.assertEqual(self.client.current_request.method, 'POST')
-        self.assertUrlEqual(
-            self.get_voice_url('Call', uuid, 'Play'),
-            self.client.current_request.url)
+def test_create_call(monkeypatch):
+    captured = _capture(monkeypatch)
+    client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
 
-    @with_response(204)
-    def test_play_delete(self):
-        self.client.calls.play_stop(uuid)
-        self.assertEqual(self.client.current_request.method, 'DELETE')
-        self.assertUrlEqual(
-            self.get_voice_url('Call', uuid, 'Play'),
-            self.client.current_request.url)
+    client.calls.create(
+        from_="14155551234",
+        to_="14155555678",
+        answer_url="https://example.com/answer",
+    )
 
-    @with_response(202)
-    def test_record_create(self):
-        self.client.calls.record(uuid, 'http://test.url')
-        self.assertEqual(self.client.current_request.method, 'POST')
-        self.assertUrlEqual(
-            self.get_voice_url('Call', uuid, 'Record'),
-            self.client.current_request.url)
+    req = captured["request"]
+    assert req.method == "POST"
+    assert req.url == "https://api.vobiz.ai/api/v1/Account/MA_TEST/Call/"
+    body = json.loads(req.body.decode() if isinstance(req.body, (bytes, bytearray)) else req.body)
+    assert body["from"] == "14155551234"
+    assert body["to"] == "14155555678"
 
-    @with_response(204)
-    def test_record_delete(self):
-        self.client.calls.record_stop(uuid)
-        self.assertEqual(self.client.current_request.method, 'DELETE')
-        self.assertUrlEqual(
-            self.get_voice_url('Call', uuid, 'Record'),
-            self.client.current_request.url)
 
-    @with_response(202)
-    def test_dtmf_create(self):
-        self.client.calls.send_digits(uuid, '123')
-        self.assertEqual(self.client.current_request.method, 'POST')
-        self.assertUrlEqual(
-            self.get_voice_url('Call', uuid, 'DTMF'),
-            self.client.current_request.url)
+def test_transfer_call(monkeypatch):
+    captured = _capture(monkeypatch)
+    client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
+    call_uuid = "CALL_UUID"
 
-    @with_response(202)
-    def test_play_create(self):
-        self.client.calls.play(uuid, 'http://test.url')
-        self.assertEqual(self.client.current_request.method, 'POST')
-        self.assertUrlEqual(
-            self.get_voice_url('Call', uuid, 'Play'),
-            self.client.current_request.url)
+    client.calls.transfer(
+        call_uuid,
+        legs="both",
+        aleg_url="https://example.com/aleg",
+        aleg_method="POST",
+        bleg_url="https://example.com/bleg",
+        bleg_method="POST",
+    )
 
-    @with_response(204)
-    def test_play_delete(self):
-        self.client.calls.play_stop(uuid)
-        self.assertEqual(self.client.current_request.method, 'DELETE')
-        self.assertUrlEqual(
-            self.get_voice_url('Call', uuid, 'Play'),
-            self.client.current_request.url)
+    req = captured["request"]
+    assert req.method == "POST"
+    assert req.url == f"https://api.vobiz.ai/api/v1/Account/MA_TEST/Call/{call_uuid}/"
+    body = json.loads(req.body.decode() if isinstance(req.body, (bytes, bytearray)) else req.body)
+    assert body["legs"] == "both"
+    assert body["aleg_url"] == "https://example.com/aleg"
+    assert body["bleg_url"] == "https://example.com/bleg"
 
-    @with_response(202)
-    def test_speak_create(self):
-        self.client.calls.speak(uuid, 'http://test.url')
-        self.assertEqual(self.client.current_request.method, 'POST')
-        self.assertUrlEqual(
-            self.get_voice_url('Call', uuid, 'Speak'),
-            self.client.current_request.url)
 
-    @with_response(204)
-    def test_speak_delete(self):
-        self.client.calls.speak_stop(uuid)
-        self.assertEqual(self.client.current_request.method, 'DELETE')
-        self.assertUrlEqual(
-            self.get_voice_url('Call', uuid, 'Speak'),
-            self.client.current_request.url)
+def test_hangup_call(monkeypatch):
+    captured = _capture(monkeypatch)
+    client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
+    call_uuid = "CALL_UUID"
 
-    @with_response(201)
-    def test_stream_create(self):
-        service_url = 'http://test.url'
-        self.client.calls.start_stream(uuid, service_url)
-        self.assertEqual(self.client.current_request.method, 'POST')
-        self.assertUrlEqual(
-            self.get_voice_url('Call', uuid, 'Stream'),
-            self.client.current_request.url)
+    client.calls.hangup(call_uuid)
 
-    @with_response(200)
-    def test_stream_get_all(self):
-        self.client.calls.get_all_streams(uuid)
-        self.assertEqual(self.client.current_request.method, 'GET')
-        self.assertUrlEqual(
-            self.get_voice_url('Call', uuid, 'Stream'),
-            self.client.current_request.url)
+    req = captured["request"]
+    assert req.method == "DELETE"
+    assert req.url == f"https://api.vobiz.ai/api/v1/Account/MA_TEST/Call/{call_uuid}/"
 
-    @with_response(204)
-    def test_stream_delete_all(self):
-        self.client.calls.delete_all_streams(uuid)
-        self.assertEqual(self.client.current_request.method, 'DELETE')
-        self.assertUrlEqual(
-            self.get_voice_url('Call', uuid, 'Stream'),
-            self.client.current_request.url)
+
+def test_list_live_calls(monkeypatch):
+    captured = _capture(monkeypatch)
+    client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
+
+    client.calls.list_live()
+
+    req = captured["request"]
+    assert req.method == "GET"
+    assert req.url.startswith("https://api.vobiz.ai/api/v1/Account/MA_TEST/Call/")
+    # status should be a query param
+    assert "status=live" in (req.url or "")
+
+
+def test_list_queued_calls(monkeypatch):
+    captured = _capture(monkeypatch)
+    client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
+
+    client.calls.list_queued()
+
+    req = captured["request"]
+    assert req.method == "GET"
+    assert req.url.startswith("https://api.vobiz.ai/api/v1/Account/MA_TEST/Call/")
+    assert "status=queued" in (req.url or "")
+
+
+def test_get_live_call_detail(monkeypatch):
+    captured = _capture(monkeypatch)
+    client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
+    call_uuid = "CALL_UUID"
+
+    client.calls.get_live(call_uuid)
+
+    req = captured["request"]
+    assert req.method == "GET"
+    assert req.url.startswith(
+        f"https://api.vobiz.ai/api/v1/Account/MA_TEST/Call/{call_uuid}/"
+    )
+    assert "status=live" in (req.url or "")
+
+
+def test_get_queued_call_detail(monkeypatch):
+    captured = _capture(monkeypatch)
+    client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
+    call_uuid = "CALL_UUID"
+
+    client.calls.get_queued(call_uuid)
+
+    req = captured["request"]
+    assert req.method == "GET"
+    assert req.url.startswith(
+        f"https://api.vobiz.ai/api/v1/Account/MA_TEST/Call/{call_uuid}/"
+    )
+    assert "status=queued" in (req.url or "")
+
+
+def test_send_dtmf(monkeypatch):
+    captured = _capture(monkeypatch)
+    client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
+    call_uuid = "CALL_UUID"
+
+    client.calls.send_digits(call_uuid, digits="1234", leg="both")
+
+    req = captured["request"]
+    assert req.method == "POST"
+    assert req.url == f"https://api.vobiz.ai/api/v1/Account/MA_TEST/Call/{call_uuid}/DTMF/"
+    body = json.loads(req.body.decode() if isinstance(req.body, (bytes, bytearray)) else req.body)
+    assert body["digits"] == "1234"
+    assert body["leg"] == "both"
+
+
+def test_api_error_raises(monkeypatch):
+    import pytest
+    from requests import Response
+
+    def error_send(self, request, **kwargs):
+        resp = Response()
+        resp.status_code = 400
+        resp._content = b'{"error": "invalid request"}'
+        resp.headers["Content-Type"] = "application/json"
+        return resp
+
+    monkeypatch.setattr("requests.sessions.Session.send", error_send, raising=True)
+
+    client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
+
+    with pytest.raises(Exception):
+        client.calls.create(
+            from_="14155551234",
+            to_="14155555678",
+            answer_url="https://example.com/answer",
+        )
