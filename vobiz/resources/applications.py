@@ -31,9 +31,9 @@ class Applications:
         **extra: Any,
     ):
         """
-        POST /api/v1/accounts/{account_id}/applications/
+        POST /api/v1/Account/{account_id}/Application/
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/applications/"
+        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/Application/"
         body: Dict[str, Any] = {
             "name": name,
             "answer_url": answer_url,
@@ -63,9 +63,9 @@ class Applications:
         application_type: Optional[str] = None,
     ):
         """
-        GET /api/v1/accounts/{account_id}/applications/
+        GET /api/v1/Account/{account_id}/Application/
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/applications/"
+        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/Application/"
         params: Dict[str, Any] = {}
         if page is not None:
             params["page"] = page
@@ -81,9 +81,9 @@ class Applications:
 
     def get(self, application_id: str):
         """
-        GET /api/v1/accounts/{account_id}/applications/{application_id}
+        GET /api/v1/Account/{account_id}/Application/{application_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/applications/{application_id}"
+        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/Application/{application_id}"
         resp = self.client.session.get(
             url, timeout=self.client.timeout, proxies=self.client.proxies
         )
@@ -91,9 +91,9 @@ class Applications:
 
     def update(self, application_id: str, **params: Any):
         """
-        PUT /api/v1/accounts/{account_id}/applications/{application_id}
+        PUT /api/v1/Account/{account_id}/Application/{application_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/applications/{application_id}"
+        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/Application/{application_id}"
         body: Dict[str, Any] = dict(params)
         resp = self.client.session.put(
             url, json=body, timeout=self.client.timeout, proxies=self.client.proxies
@@ -102,9 +102,9 @@ class Applications:
 
     def delete(self, application_id: str):
         """
-        DELETE /api/v1/accounts/{account_id}/applications/{application_id}
+        DELETE /api/v1/Account/{account_id}/Application/{application_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/applications/{application_id}"
+        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/Application/{application_id}"
         resp = self.client.session.delete(
             url, timeout=self.client.timeout, proxies=self.client.proxies
         )

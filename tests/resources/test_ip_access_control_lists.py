@@ -20,87 +20,83 @@ def _capture(monkeypatch):
     return captured
 
 
-def test_create_application(monkeypatch):
+def test_create_ip_acl(monkeypatch):
     captured = _capture(monkeypatch)
     client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
 
-    client.applications.create(
-        name="App",
-        answer_url="https://example.com/answer",
-        hangup_url="https://example.com/hangup",
-        application_type="voice",
+    client.ip_access_control_lists.create(
+        name="Office IPs",
+        description="Corporate offices",
+        ip_addresses=["203.0.113.1/32", "203.0.113.2/32"],
     )
 
     req = captured["request"]
     assert req.method == "POST"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/Account/MA_TEST/Application/"
+        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/ip-access-control-lists/"
     )
     body = json.loads(req.body.decode() if isinstance(req.body, (bytes, bytearray)) else req.body)
-    assert body["name"] == "App"
-    assert body["answer_url"] == "https://example.com/answer"
-    assert body["hangup_url"] == "https://example.com/hangup"
-    assert body["application_type"] == "voice"
+    assert body["name"] == "Office IPs"
+    assert body["description"] == "Corporate offices"
+    assert body["ip_addresses"] == ["203.0.113.1/32", "203.0.113.2/32"]
 
 
-def test_list_applications(monkeypatch):
+def test_list_ip_acls(monkeypatch):
     captured = _capture(monkeypatch)
     client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
 
-    client.applications.list(page=2, size=25, application_type="voice")
+    client.ip_access_control_lists.list(page=1, size=10)
 
     req = captured["request"]
     assert req.method == "GET"
     assert req.url.startswith(
-        "https://api.vobiz.ai/api/v1/Account/MA_TEST/Application/"
+        "https://api.vobiz.ai/api/v1/accounts/MA_TEST/ip-access-control-lists/"
     )
-    assert "page=2" in (req.url or "")
-    assert "size=25" in (req.url or "")
-    assert "application_type=voice" in (req.url or "")
+    assert "page=1" in (req.url or "")
+    assert "size=10" in (req.url or "")
 
 
-def test_get_application(monkeypatch):
+def test_get_ip_acl(monkeypatch):
     captured = _capture(monkeypatch)
     client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
 
-    client.applications.get("APP_ID")
+    client.ip_access_control_lists.get("ACL_ID")
 
     req = captured["request"]
     assert req.method == "GET"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/Account/MA_TEST/Application/APP_ID"
+        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/ip-access-control-lists/ACL_ID"
     )
 
 
-def test_update_application(monkeypatch):
+def test_update_ip_acl(monkeypatch):
     captured = _capture(monkeypatch)
     client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
 
-    client.applications.update("APP_ID", name="NewName", application_type="voice")
+    client.ip_access_control_lists.update("ACL_ID", name="Updated Name")
 
     req = captured["request"]
     assert req.method == "PUT"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/Account/MA_TEST/Application/APP_ID"
+        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/ip-access-control-lists/ACL_ID"
     )
     body = json.loads(req.body.decode() if isinstance(req.body, (bytes, bytearray)) else req.body)
-    assert body["name"] == "NewName"
-    assert body["application_type"] == "voice"
+    assert body["name"] == "Updated Name"
 
 
-def test_delete_application(monkeypatch):
+def test_delete_ip_acl(monkeypatch):
     captured = _capture(monkeypatch)
     client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
 
-    client.applications.delete("APP_ID")
+    client.ip_access_control_lists.delete("ACL_ID")
 
     req = captured["request"]
     assert req.method == "DELETE"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/Account/MA_TEST/Application/APP_ID"
+        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/ip-access-control-lists/ACL_ID"
     )
 

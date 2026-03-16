@@ -29,6 +29,8 @@ from vobiz.resources import (
     Endpoints,
     SipTrunks,
     Credentials,
+    IpAccessControlLists,
+    OriginationUris,
 )
 from vobiz.version import __version__
 from requests import Request, Session
@@ -111,6 +113,8 @@ class Client(object):
         self.endpoints = Endpoints(self)
         self.sip_trunks = SipTrunks(self)
         self.credentials = Credentials(self)
+        self.ip_access_control_lists = IpAccessControlLists(self)
+        self.origination_uris = OriginationUris(self)
 
 
     def __enter__(self):

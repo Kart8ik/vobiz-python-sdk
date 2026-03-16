@@ -29,9 +29,9 @@ class PhoneNumbers:
         **filters: Any,
     ):
         """
-        GET /api/v1/accounts/{account_id}/phone-numbers/search
+        GET /api/v1/Account/{account_id}/numbers/search
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/phone-numbers/search"
+        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/numbers/search"
         params: Dict[str, Any] = {"country": country}
         if type is not None:
             params["type"] = type
@@ -52,9 +52,9 @@ class PhoneNumbers:
 
     def buy(self, phone_number: str, application_id: Optional[str] = None, **extra: Any):
         """
-        POST /api/v1/accounts/{account_id}/phone-numbers/
+        POST /api/v1/Account/{account_id}/numbers/
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/phone-numbers/"
+        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/numbers/"
         body: Dict[str, Any] = {"phone_number": phone_number}
         if application_id is not None:
             body["application_id"] = application_id
@@ -73,9 +73,9 @@ class PhoneNumbers:
         **filters: Any,
     ):
         """
-        GET /api/v1/accounts/{account_id}/phone-numbers/
+        GET /api/v1/Account/{account_id}/numbers/
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/phone-numbers/"
+        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/numbers/"
         params: Dict[str, Any] = {}
         if page is not None:
             params["page"] = page
@@ -92,9 +92,9 @@ class PhoneNumbers:
 
     def get(self, phone_number_id: str):
         """
-        GET /api/v1/accounts/{account_id}/phone-numbers/{phone_number_id}
+        GET /api/v1/Account/{account_id}/numbers/{phone_number_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/phone-numbers/{phone_number_id}"
+        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/numbers/{phone_number_id}"
         resp = self.client.session.get(
             url, timeout=self.client.timeout, proxies=self.client.proxies
         )
@@ -102,9 +102,9 @@ class PhoneNumbers:
 
     def update(self, phone_number_id: str, **params: Any):
         """
-        PUT /api/v1/accounts/{account_id}/phone-numbers/{phone_number_id}
+        PUT /api/v1/Account/{account_id}/numbers/{phone_number_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/phone-numbers/{phone_number_id}"
+        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/numbers/{phone_number_id}"
         body: Dict[str, Any] = dict(params)
         resp = self.client.session.put(
             url, json=body, timeout=self.client.timeout, proxies=self.client.proxies
@@ -113,9 +113,9 @@ class PhoneNumbers:
 
     def delete(self, phone_number_id: str):
         """
-        DELETE /api/v1/accounts/{account_id}/phone-numbers/{phone_number_id}
+        DELETE /api/v1/Account/{account_id}/numbers/{phone_number_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/phone-numbers/{phone_number_id}"
+        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/numbers/{phone_number_id}"
         resp = self.client.session.delete(
             url, timeout=self.client.timeout, proxies=self.client.proxies
         )

@@ -34,7 +34,7 @@ def test_search_phone_numbers(monkeypatch):
     req = captured["request"]
     assert req.method == "GET"
     assert req.url.startswith(
-        "https://api.vobiz.ai/api/v1/accounts/MA_TEST/phone-numbers/search"
+        "https://api.vobiz.ai/api/v1/Account/MA_TEST/numbers/search"
     )
     assert "country=US" in (req.url or "")
     assert "type=local" in (req.url or "")
@@ -59,7 +59,7 @@ def test_buy_phone_number(monkeypatch):
     assert req.method == "POST"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/phone-numbers/"
+        == "https://api.vobiz.ai/api/v1/Account/MA_TEST/numbers/"
     )
     body = json.loads(req.body.decode() if isinstance(req.body, (bytes, bytearray)) else req.body)
     assert body["phone_number"] == "+14155550100"
@@ -75,7 +75,7 @@ def test_list_phone_numbers(monkeypatch):
     req = captured["request"]
     assert req.method == "GET"
     assert req.url.startswith(
-        "https://api.vobiz.ai/api/v1/accounts/MA_TEST/phone-numbers/"
+        "https://api.vobiz.ai/api/v1/Account/MA_TEST/numbers/"
     )
     assert "page=1" in (req.url or "")
     assert "size=20" in (req.url or "")
@@ -92,7 +92,7 @@ def test_get_phone_number(monkeypatch):
     assert req.method == "GET"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/phone-numbers/PN_ID"
+        == "https://api.vobiz.ai/api/v1/Account/MA_TEST/numbers/PN_ID"
     )
 
 
@@ -108,7 +108,7 @@ def test_update_phone_number(monkeypatch):
     assert req.method == "PUT"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/phone-numbers/PN_ID"
+        == "https://api.vobiz.ai/api/v1/Account/MA_TEST/numbers/PN_ID"
     )
     body = json.loads(req.body.decode() if isinstance(req.body, (bytes, bytearray)) else req.body)
     assert body["application_id"] == "NEW_APP"
@@ -124,6 +124,6 @@ def test_delete_phone_number(monkeypatch):
     assert req.method == "DELETE"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/phone-numbers/PN_ID"
+        == "https://api.vobiz.ai/api/v1/Account/MA_TEST/numbers/PN_ID"
     )
 

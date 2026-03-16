@@ -1,30 +1,85 @@
+import os
+
 import vobiz
 
-client = vobiz.RestClient()
 
-resp = client.calls.create(
-    from_="911171366943",
-    to_="917348860185",
-    answer_url="https://example.com/answer.xml",
-)
-print(resp)
+def main() -> None:
+    # Use explicit credentials or rely on VOBIZ_AUTH_ID / VOBIZ_AUTH_TOKEN
+    client = vobiz.RestClient(
+        auth_id=os.environ.get("VOBIZ_AUTH_ID", "MA_TEST"),
+        auth_token=os.environ.get("VOBIZ_AUTH_TOKEN", "TOKEN"),
+    )
 
-live = client.calls.list_live()
-print(live.__dict__)
+    # Calls
+    call = client.calls.create(
+        from_="911171366943",
+        to_="917348860185",
+        answer_url="https://example.com/answer.xml",
+    )
+    print("Created call:", getattr(call, "__dict__", call))
 
-queued = client.calls.list_queued()
-print(queued.__dict__)
+    live = client.calls.list_live()
+    print("Live calls:", getattr(live, "__dict__", live))
 
-# If the API returns a 'calls' list, you can do:
-# for call in live.calls:
-#     print(call)
+    queued = client.calls.list_queued()
+    print("Queued calls:", getattr(queued, "__dict__", queued))
+
+    # Accounts
+    me = client.accounts.get()
+    print("Account:", getattr(me, "__dict__", me))
+
+    # Applications
+    app = client.applications.create(
+        name="My App",
+        answer_url="https://example.com/answer.xml",
+    )
+    print("Application:", getattr(app, "__dict__", app))
+
+    # Phone numbers
+    numbers = client.phone_numbers.search(country="US", type="local", pattern="415")
+    print("Search numbers:", getattr(numbers, "__dict__", numbers))
+
+    # Endpoints
+    endpoint = client.endpoints.create(
+        username="user1",
+        password="secret",
+        alias="Desk Phone",
+    )
+    print("Endpoint:", getattr(endpoint, "__dict__", endpoint))
+
+    # SIP trunks
+    trunk = client.sip_trunks.create(
+        name="Main Trunk",
+        inbound_uri="sip:inbound@example.com",
+        outbound_uri="sip:outbound@example.com",
+    )
+    print("SIP trunk:", getattr(trunk, "__dict__", trunk))
+
+    # Credentials
+    cred = client.credentials.create(
+        username="trunk-user",
+        password="trunk-pass",
+        trunk_id=getattr(trunk, "id", None),
+    )
+    print("Credential:", getattr(cred, "__dict__", cred))
+
+    # IP Access Control Lists
+    acl = client.ip_access_control_lists.create(
+        name="Office IPs",
+        description="Corporate offices",
+        ip_addresses=["203.0.113.1/32"],
+    )
+    print("IP ACL:", getattr(acl, "__dict__", acl))
+
+    # Origination URIs
+    uri = client.origination_uris.create(
+        uri="sip:carrier@example.com",
+        trunk_id=getattr(trunk, "id", None),
+        weight=10,
+        priority=1,
+    )
+    print("Origination URI:", getattr(uri, "__dict__", uri))
 
 
-# client.calls.transfer(
-#     call_uuid="CALL_UUID",
-#     legs="both",
-#     aleg_url="https://example.com/aleg.xml",
-#     aleg_method="POST",
-#     bleg_url="https://example.com/bleg.xml",
-#     bleg_method="POST",
-# )
+if __name__ == "__main__":
+    main()

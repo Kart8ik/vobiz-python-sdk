@@ -8,3 +8,5 @@ from .numbers import PhoneNumbers
 from .endpoints import Endpoints
 from .sip_trunks import SipTrunks
 from .credentials import Credentials
+from .ip_access_control_lists import IpAccessControlLists
+from .origination_uris import OriginationUris
