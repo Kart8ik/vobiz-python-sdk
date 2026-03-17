@@ -2,6 +2,7 @@ import os
 
 import vobiz
 
+# do export VOBIZ_AUTH_ID and VOBIZ_AUTH_TOKEN to run these in a session
 
 def main() -> None:
     # Use explicit credentials or rely on VOBIZ_AUTH_ID / VOBIZ_AUTH_TOKEN
