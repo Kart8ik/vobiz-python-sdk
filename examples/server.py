@@ -9,10 +9,10 @@ Run:
     python examples/server.py
 
 Then expose it:
-    ngrok http 5000
+    ngrok http 5001
 
 Copy the ngrok HTTPS URL into .env as:
-    ANSWER_URL=https://<ngrok-id>.ngrok.io/answer
+    ANSWER_URL=https://<ngrok-id>.ngrok-free.dev/answer
 """
 import os
 import sys
@@ -51,7 +51,7 @@ def answer():
         action="/handle-input",
         method="POST",
         num_digits=1,
-        timeout=10
+        timeout=5
     )
 
     get_digits.add_speak(
