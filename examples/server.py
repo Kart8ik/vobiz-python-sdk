@@ -14,7 +14,6 @@ Then expose it:
 Copy the ngrok HTTPS URL into .env as:
     ANSWER_URL=https://<ngrok-id>.ngrok.io/answer
 """
-
 import os
 import sys
 
@@ -46,13 +45,66 @@ def answer():
     print(f"  To       : {to_number}")
 
     response = vobizxml.ResponseElement()
-    response.add_speak(
-        "Hello! This is a live test call from the Vobiz Python SDK. "
-        "The call is working correctly. Goodbye!",
+
+    # IVR: Ask for input instead of killing the call immediately
+    get_digits = response.add_get_digits(
+        action="/handle-input",
+        method="POST",
+        num_digits=1,
+        timeout=10
+    )
+
+    get_digits.add_speak(
+        "Hello! Welcome to the Vobiz Python SDK demo. "
+        "Press 1 for sales, press 2 for support.",
         voice="WOMAN",
         language="en-US",
     )
-    response.add_wait(length=1)
+
+    # Fallback if no input
+    response.add_speak(
+        "No input received. Goodbye!",
+        voice="WOMAN",
+        language="en-US",
+    )
+    response.add_hangup()
+
+    xml = response.to_string(pretty=False)
+    print(f"  Responding with XML:\n  {xml}\n")
+
+    return Response(xml, status=200, mimetype='application/xml')
+
+
+@app.route('/handle-input', methods=['GET', 'POST'])
+def handle_input():
+    """
+    Handles digit input from the caller.
+    """
+    digit = request.values.get('Digits', '')
+
+    print(f"\n[/handle-input] Received input: {digit}")
+
+    response = vobizxml.ResponseElement()
+
+    if digit == "1":
+        response.add_speak(
+            "You selected sales. Our team will contact you soon.",
+            voice="WOMAN",
+            language="en-US",
+        )
+    elif digit == "2":
+        response.add_speak(
+            "You selected support. Please hold while we assist you.",
+            voice="WOMAN",
+            language="en-US",
+        )
+    else:
+        response.add_speak(
+            "Invalid input received. Goodbye!",
+            voice="WOMAN",
+            language="en-US",
+        )
+
     response.add_hangup()
 
     xml = response.to_string(pretty=False)

@@ -71,12 +71,12 @@ def main():
     print(f"  Answer URL : {ANSWER_URL}")
     print(f"  Hangup URL : {HANGUP_URL}")
 
-    # Create client (reads VOBIZ_AUTH_ID + VOBIZ_AUTH_TOKEN from .env)
+    # Create client
     client = vobiz.RestClient()
     ok('Client created', f"Auth ID: {client.auth_id}")
 
     # -----------------------------------------------------------
-    # Step 1: Create the call
+    # Step 1: Create Call
     # -----------------------------------------------------------
     sep('Step 1: Create Call')
     call_uuid = None
@@ -85,9 +85,9 @@ def main():
             from_=FROM_NUMBER,
             to_=TO_NUMBER,
             answer_url=ANSWER_URL,
-            answer_method='GET',
+            answer_method='POST',
             hangup_url=HANGUP_URL,
-            hangup_method='GET',
+            hangup_method='POST',
         )
         call_uuid = getattr(resp, 'request_uuid', None) or getattr(resp, 'call_uuid', None)
         ok('Call created', str(resp))
@@ -97,45 +97,58 @@ def main():
         sys.exit(1)
 
     # -----------------------------------------------------------
-    # Step 2: List live calls (call should appear here briefly)
+    # Step 2: Observe Call State (Queued → Live)
     # -----------------------------------------------------------
-    sep('Step 2: List Live Calls')
+    sep('Step 2: Observe Call State')
+
+    print('  Waiting for call to transition to live...')
+    time.sleep(3)
+
     try:
         live = client.calls.list_live()
-        ok('List live calls', str(live))
+        ok('Live calls', str(live))
     except Exception as e:
         fail('List live calls', e)
 
-    # -----------------------------------------------------------
-    # Step 3: List queued calls
-    # -----------------------------------------------------------
-    sep('Step 3: List Queued Calls')
     try:
         queued = client.calls.list_queued()
-        ok('List queued calls', str(queued))
+        ok('Queued calls', str(queued))
     except Exception as e:
         fail('List queued calls', e)
 
     # -----------------------------------------------------------
-    # Step 4: Send DTMF digits (after a short wait for the call to connect)
+    # Step 3: Interact (Send DTMF)
     # -----------------------------------------------------------
-    sep('Step 4: Send DTMF Digits')
+    sep('Step 3: Send DTMF Input')
+
     if call_uuid:
-        print('  Waiting 5 seconds for call to connect...')
+        print('  Waiting for IVR prompt...')
         time.sleep(5)
+
         try:
-            dtmf_resp = client.calls.send_digits(call_uuid, digits='1', leg='aleg')
-            ok('Send DTMF', str(dtmf_resp))
+            dtmf_resp = client.calls.send_digits(
+                call_uuid,
+                digits='1',
+                leg='aleg'
+            )
+            ok('DTMF sent (pressed 1)', str(dtmf_resp))
         except Exception as e:
             fail('Send DTMF', e)
 
     # -----------------------------------------------------------
-    # Step 7: Hangup
+    # Step 4: Let Call Continue
+    # -----------------------------------------------------------
+    sep('Step 4: Let Call Flow Complete')
+
+    print('  Letting call run for a few seconds...')
+    time.sleep(8)
+
+    # -----------------------------------------------------------
+    # Step 5: Hangup (if still active)
     # -----------------------------------------------------------
     sep('Step 5: Hangup Call')
+
     if call_uuid:
-        print('  Waiting 3 more seconds before hangup...')
-        time.sleep(3)
         try:
             client.calls.hangup(call_uuid)
             ok('Call hung up', call_uuid)
