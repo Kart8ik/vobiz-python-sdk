@@ -28,36 +28,36 @@ def test_create_endpoint(monkeypatch):
         username="user1",
         password="secret",
         alias="Desk Phone",
-        application_id="APP_ID",
+        application="APP_ID",
     )
 
     req = captured["request"]
     assert req.method == "POST"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/endpoints/"
+        == "https://api.vobiz.ai/api/v1/Account/MA_TEST/Endpoint/"
     )
     body = json.loads(req.body.decode() if isinstance(req.body, (bytes, bytearray)) else req.body)
     assert body["username"] == "user1"
     assert body["password"] == "secret"
     assert body["alias"] == "Desk Phone"
-    assert body["application_id"] == "APP_ID"
+    assert body["application"] == "APP_ID"
 
 
 def test_list_endpoints(monkeypatch):
     captured = _capture(monkeypatch)
     client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
 
-    client.endpoints.list(page=2, size=25, application_id="APP_ID")
+    client.endpoints.list(limit=20, offset=0, username__contains="john")
 
     req = captured["request"]
     assert req.method == "GET"
     assert req.url.startswith(
-        "https://api.vobiz.ai/api/v1/accounts/MA_TEST/endpoints/"
+        "https://api.vobiz.ai/api/v1/Account/MA_TEST/Endpoint/"
     )
-    assert "page=2" in (req.url or "")
-    assert "size=25" in (req.url or "")
-    assert "application_id=APP_ID" in (req.url or "")
+    assert "limit=20" in (req.url or "")
+    assert "offset=0" in (req.url or "")
+    assert "username__contains=john" in (req.url or "")
 
 
 def test_get_endpoint(monkeypatch):
@@ -70,7 +70,7 @@ def test_get_endpoint(monkeypatch):
     assert req.method == "GET"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/endpoints/EP_ID"
+        == "https://api.vobiz.ai/api/v1/Account/MA_TEST/Endpoint/EP_ID/"
     )
 
 
@@ -81,10 +81,10 @@ def test_update_endpoint(monkeypatch):
     client.endpoints.update("EP_ID", alias="Softphone", password="newpass")
 
     req = captured["request"]
-    assert req.method == "PUT"
+    assert req.method == "POST"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/endpoints/EP_ID"
+        == "https://api.vobiz.ai/api/v1/Account/MA_TEST/Endpoint/EP_ID/"
     )
     body = json.loads(req.body.decode() if isinstance(req.body, (bytes, bytearray)) else req.body)
     assert body["alias"] == "Softphone"
@@ -101,6 +101,6 @@ def test_delete_endpoint(monkeypatch):
     assert req.method == "DELETE"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/endpoints/EP_ID"
+        == "https://api.vobiz.ai/api/v1/Account/MA_TEST/Endpoint/EP_ID/"
     )
 

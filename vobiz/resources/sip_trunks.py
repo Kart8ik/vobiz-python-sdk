@@ -7,7 +7,8 @@ class SipTrunks:
     """
     Vobiz SIP Trunks resource.
 
-    All endpoints are scoped to the authenticated account.
+    Uses the `/api/v1/account/{account_id}/trunks/...` paths described in
+    the Vobiz SIP trunks documentation.
     """
 
     def __init__(self, client):
@@ -26,9 +27,9 @@ class SipTrunks:
         **extra: Any,
     ):
         """
-        POST /api/v1/accounts/{account_id}/sip-trunks/
+        POST /api/v1/account/{account_id}/trunks
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/sip-trunks/"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/trunks"
         body: Dict[str, Any] = {"name": name}
         if inbound_uri is not None:
             body["inbound_uri"] = inbound_uri
@@ -48,9 +49,9 @@ class SipTrunks:
         **filters: Any,
     ):
         """
-        GET /api/v1/accounts/{account_id}/sip-trunks/
+        GET /api/v1/account/{account_id}/trunks
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/sip-trunks/"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/trunks"
         params: Dict[str, Any] = {}
         if page is not None:
             params["page"] = page
@@ -65,9 +66,9 @@ class SipTrunks:
 
     def get(self, trunk_id: str):
         """
-        GET /api/v1/accounts/{account_id}/sip-trunks/{trunk_id}
+        GET /api/v1/account/{account_id}/trunks/{trunk_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/sip-trunks/{trunk_id}"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/trunks/{trunk_id}"
         resp = self.client.session.get(
             url, timeout=self.client.timeout, proxies=self.client.proxies
         )
@@ -75,9 +76,9 @@ class SipTrunks:
 
     def update(self, trunk_id: str, **params: Any):
         """
-        PUT /api/v1/accounts/{account_id}/sip-trunks/{trunk_id}
+        PUT /api/v1/account/{account_id}/trunks/{trunk_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/sip-trunks/{trunk_id}"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/trunks/{trunk_id}"
         body: Dict[str, Any] = dict(params)
         resp = self.client.session.put(
             url, json=body, timeout=self.client.timeout, proxies=self.client.proxies
@@ -86,9 +87,11 @@ class SipTrunks:
 
     def delete(self, trunk_id: str):
         """
-        DELETE /api/v1/accounts/{account_id}/sip-trunks/{trunk_id}
+        DELETE /api/v1/account/{account_id}/trunks/{trunk_id}
+
+        Permanently delete a SIP trunk and its associated resources.
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/sip-trunks/{trunk_id}"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/trunks/{trunk_id}"
         resp = self.client.session.delete(
             url, timeout=self.client.timeout, proxies=self.client.proxies
         )

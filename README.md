@@ -1,82 +1,91 @@
-# plivo-python
+## Vobiz Python SDK
 
-[![UnitTests](https://github.com/plivo/plivo-python/actions/workflows/unitTests.yml/badge.svg?branch=master)](https://github.com/plivo/plivo-python/actions/workflows/unitTests.yml)
-[![PyPI](https://img.shields.io/pypi/v/plivo.svg)](https://pypi.python.org/pypi/plivo)
-[![PyPI](https://img.shields.io/pypi/pyversions/plivo.svg)](https://pypi.python.org/pypi/plivo)
-[![codecov](https://codecov.io/gh/plivo/plivo-python/branch/master/graph/badge.svg)](https://codecov.io/gh/plivo/plivo-python)
-[![PyPI](https://img.shields.io/pypi/l/plivo.svg)](https://pypi.python.org/pypi/plivo)
+The **Vobiz Python SDK** makes it simple to integrate Vobiz voice and call-control
+features into your Python applications. It provides a thin, well-typed wrapper
+around the Vobiz REST API endpoints and XML response format.
 
+This README is intentionally minimal; see your internal Vobiz API PDFs for the
+full endpoint reference. The SDK is designed so that HTTP methods, paths, and
+parameters in code match those documents exactly.
 
-The Plivo Python SDK makes it simpler to integrate communications into your Python applications using the Plivo REST API. Using the SDK, you will be able to make voice calls, send SMS and generate Plivo XML to control your call flows.
+### Installation
 
-## Installation
-Install the SDK using [pip](http://www.pip-installer.org/en/latest/)
+Install from your local clone:
 
-    pip install plivo
-
-If you have the `0.11.3` version (a.k.a legacy) already installed, you will have to first uninstall it before installing the new version. `pip install --upgrade plivo` might not work depending on your system status.
-
-Alternatively, you can download the source code from this repo(master branch) and run
-
-    python setup.py install
-
-For features in beta, use the beta branch:
-
-    pip install plivo==4.2.0b1
-    
-Alternatively, you can download the source code from this repo(beta branch) and run
-
-    python setup.py install
-
-We recommend that you use [virtualenv](https://virtualenv.pypa.io/en/stable/) to manage and segregate your Python environments, instead of using `sudo` with your commands and overwriting dependencies.
-
-## Getting started
+```bash
+pip install -e .
+```
 
 ### Authentication
-To make the API requests, you need to create a `RestClient` and provide it with authentication credentials (which can be found at [https://manage.plivo.com/dashboard/](https://manage.plivo.com/dashboard/)).
 
-We recommend that you store your credentials in the `PLIVO_AUTH_ID` and the `PLIVO_AUTH_TOKEN` environment variables, so as to avoid the possibility of accidentally committing them to source control. If you do this, you can initialise the client with no arguments and it will automatically fetch them from the environment variables:
+Vobiz uses account-scoped authentication via headers:
 
-```python
-import plivo
+- `X-Auth-ID` – your account ID
+- `X-Auth-Token` – your account token
 
-client = plivo.RestClient()
-```
-Alternatively, you can specifiy the authentication credentials while initializing the `RestClient`.
+The SDK reads these from the environment when possible:
 
-```python
-import plivo
+- `VOBIZ_AUTH_ID`
+- `VOBIZ_AUTH_TOKEN`
 
-client = plivo.RestClient(auth_id='your_auth_id', auth_token='your_auth_token')
-```
-
-If you expect to make a large number of API requests, re-use the same client instance, but if you expect to create a client on an on-demand basis, you can use a context manager to automatically frees all resources used by the client
+Example:
 
 ```python
-import plivo
+import vobiz
 
-with plivo.RestClient() as client:
-  pass # Do something with the client
+client = vobiz.RestClient()  # uses VOBIZ_AUTH_ID / VOBIZ_AUTH_TOKEN
 ```
 
-### The basics
-The SDK uses consistent interfaces to create, retrieve, update, delete and list resources. The pattern followed is as follows:
+Or pass them explicitly:
 
 ```python
-client.resources.create(*args, **kwargs) # Create
-client.resources.get(id=resource_identifier) # Get
-client.resources.update(id=resource_identifier, *args, **kwargs) # Update
-client.resources.delete(id=resource_identifier) # Delete
-client.resources.list() # List all resources, max 20 at a time
+import vobiz
+
+client = vobiz.RestClient(auth_id="MA_xxx", auth_token="xxx")
 ```
 
-You can also use the `resource` directly to update and delete it. For example,
+### Core resources
+
+The main entrypoint is `vobiz.RestClient`, which exposes resources that closely
+mirror the Vobiz API:
+
+- `client.calls` – call creation, transfer, DTMF, live/queued listing
+- `client.accounts` – account info, balance, concurrency, transactions
+- `client.subaccounts` – sub-account management
+- `client.applications` – inbound call applications
+- `client.phone_numbers` – inventory, purchase, release, trunk assignment
+- `client.endpoints` – SIP endpoints
+- `client.sip_trunks` – SIP trunks
+- `client.credentials` – SIP credentials
+- `client.ip_access_control_lists` – IP ACLs
+- `client.origination_uris` – origination URIs
+
+Each resource has simple methods like `create`, `get`, `list`, `update`,
+and `delete` (where applicable), which are tested to hit the exact URLs and
+methods defined in the Vobiz endpoint PDFs.
+
+### Vobiz XML
+
+For building XML responses used in call control, import:
 
 ```python
-resource = client.resources.get(id=resource_identifier)
-resource.update(*args, **kwargs) # update the resource
-resource.delete() # Delete the resource
+from vobiz import vobizxml
 ```
+
+The XML API mirrors the original Plivo XML surface but is namespaced under
+`vobizxml` and validated by the XML test suite.
+
+### Testing locally
+
+Install test dependencies and run:
+
+```bash
+pip install -r requirements.txt
+pytest -q
+```
+
+The tests assert request construction (method, URL, headers, query string, and
+JSON body) for all implemented resources, and validate XML output.
 
 Also, using `client.resources.list()` would list the first 20 resources by default (which is the first page, with `limit` as 20, and `offset` as 0). To get more, you will have to use `limit` and `offset` to get the second page of resources.
 

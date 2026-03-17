@@ -20,20 +20,22 @@ class IpAccessControlLists:
 
     def create(
         self,
-        name: str,
+        ip_address: str,
         description: Optional[str] = None,
-        ip_addresses: Optional[list[str]] = None,
+        enabled: Optional[bool] = None,
         **extra: Any,
     ):
         """
-        POST /api/v1/accounts/{account_id}/ip-access-control-lists/
+        POST /api/v1/account/{account_id}/ip-acl
+
+        Create a new IP ACL entry.
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/ip-access-control-lists/"
-        body: Dict[str, Any] = {"name": name}
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/ip-acl"
+        body: Dict[str, Any] = {"ip_address": ip_address}
         if description is not None:
             body["description"] = description
-        if ip_addresses is not None:
-            body["ip_addresses"] = ip_addresses
+        if enabled is not None:
+            body["enabled"] = enabled
         body.update(extra)
 
         resp = self.client.session.post(
@@ -43,19 +45,21 @@ class IpAccessControlLists:
 
     def list(
         self,
-        page: Optional[int] = None,
-        size: Optional[int] = None,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
         **filters: Any,
     ):
         """
-        GET /api/v1/accounts/{account_id}/ip-access-control-lists/
+        GET /api/v1/account/{account_id}/trunks/ip-acl
+
+        Retrieve a paginated list of all IP ACL entries.
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/ip-access-control-lists/"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/trunks/ip-acl"
         params: Dict[str, Any] = {}
-        if page is not None:
-            params["page"] = page
-        if size is not None:
-            params["size"] = size
+        if limit is not None:
+            params["limit"] = limit
+        if offset is not None:
+            params["offset"] = offset
         params.update(filters)
 
         resp = self.client.session.get(
@@ -65,9 +69,9 @@ class IpAccessControlLists:
 
     def get(self, acl_id: str):
         """
-        GET /api/v1/accounts/{account_id}/ip-access-control-lists/{acl_id}
+        GET /api/v1/account/{account_id}/ip-acl/{ip_acl_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/ip-access-control-lists/{acl_id}"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/ip-acl/{acl_id}"
         resp = self.client.session.get(
             url, timeout=self.client.timeout, proxies=self.client.proxies
         )
@@ -75,9 +79,9 @@ class IpAccessControlLists:
 
     def update(self, acl_id: str, **params: Any):
         """
-        PUT /api/v1/accounts/{account_id}/ip-access-control-lists/{acl_id}
+        PUT /api/v1/account/{account_id}/ip-acl/{ip_acl_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/ip-access-control-lists/{acl_id}"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/ip-acl/{acl_id}"
         body: Dict[str, Any] = dict(params)
         resp = self.client.session.put(
             url, json=body, timeout=self.client.timeout, proxies=self.client.proxies
@@ -86,9 +90,9 @@ class IpAccessControlLists:
 
     def delete(self, acl_id: str):
         """
-        DELETE /api/v1/accounts/{account_id}/ip-access-control-lists/{acl_id}
+        DELETE /api/v1/account/{account_id}/ip-acl/{ip_acl_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/ip-access-control-lists/{acl_id}"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/ip-acl/{acl_id}"
         resp = self.client.session.delete(
             url, timeout=self.client.timeout, proxies=self.client.proxies
         )

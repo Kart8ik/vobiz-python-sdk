@@ -34,7 +34,7 @@ def test_create_sip_trunk(monkeypatch):
     assert req.method == "POST"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/sip-trunks/"
+        == "https://api.vobiz.ai/api/v1/account/MA_TEST/trunks"
     )
     body = json.loads(req.body.decode() if isinstance(req.body, (bytes, bytearray)) else req.body)
     assert body["name"] == "Main Trunk"
@@ -51,7 +51,7 @@ def test_list_sip_trunks(monkeypatch):
     req = captured["request"]
     assert req.method == "GET"
     assert req.url.startswith(
-        "https://api.vobiz.ai/api/v1/accounts/MA_TEST/sip-trunks/"
+        "https://api.vobiz.ai/api/v1/account/MA_TEST/trunks"
     )
     assert "page=1" in (req.url or "")
     assert "size=20" in (req.url or "")
@@ -67,7 +67,7 @@ def test_get_sip_trunk(monkeypatch):
     assert req.method == "GET"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/sip-trunks/TRUNK_ID"
+        == "https://api.vobiz.ai/api/v1/account/MA_TEST/trunks/TRUNK_ID"
     )
 
 
@@ -81,7 +81,7 @@ def test_update_sip_trunk(monkeypatch):
     assert req.method == "PUT"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/sip-trunks/TRUNK_ID"
+        == "https://api.vobiz.ai/api/v1/account/MA_TEST/trunks/TRUNK_ID"
     )
     body = json.loads(req.body.decode() if isinstance(req.body, (bytes, bytearray)) else req.body)
     assert body["name"] == "Updated"
@@ -97,6 +97,6 @@ def test_delete_sip_trunk(monkeypatch):
     assert req.method == "DELETE"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/sip-trunks/TRUNK_ID"
+        == "https://api.vobiz.ai/api/v1/account/MA_TEST/trunks/TRUNK_ID"
     )
 

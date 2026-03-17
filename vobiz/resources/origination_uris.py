@@ -7,7 +7,9 @@ class OriginationUris:
     """
     Vobiz Origination URIs resource.
 
-    All endpoints are scoped to the authenticated account.
+    Implements create, list, update, and delete operations using the
+    `/api/v1/account/{account_id}/origination-uris` and
+    `/api/v1/account/{account_id}/trunks/origination-uris` endpoints.
     """
 
     def __init__(self, client):
@@ -21,22 +23,24 @@ class OriginationUris:
     def create(
         self,
         uri: str,
-        trunk_id: Optional[str] = None,
-        weight: Optional[int] = None,
         priority: Optional[int] = None,
+        weight: Optional[int] = None,
+        enabled: Optional[bool] = None,
         **extra: Any,
     ):
         """
-        POST /api/v1/accounts/{account_id}/origination-uris/
+        POST /api/v1/account/{account_id}/origination-uris
+
+        Create a new origination URI for outbound routing.
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/origination-uris/"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/origination-uris"
         body: Dict[str, Any] = {"uri": uri}
-        if trunk_id is not None:
-            body["trunk_id"] = trunk_id
-        if weight is not None:
-            body["weight"] = weight
         if priority is not None:
             body["priority"] = priority
+        if weight is not None:
+            body["weight"] = weight
+        if enabled is not None:
+            body["enabled"] = enabled
         body.update(extra)
 
         resp = self.client.session.post(
@@ -46,22 +50,21 @@ class OriginationUris:
 
     def list(
         self,
-        page: Optional[int] = None,
-        size: Optional[int] = None,
-        trunk_id: Optional[str] = None,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
         **filters: Any,
     ):
         """
-        GET /api/v1/accounts/{account_id}/origination-uris/
+        GET /api/v1/account/{account_id}/trunks/origination-uris
+
+        Retrieve a paginated list of origination URIs.
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/origination-uris/"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/trunks/origination-uris"
         params: Dict[str, Any] = {}
-        if page is not None:
-            params["page"] = page
-        if size is not None:
-            params["size"] = size
-        if trunk_id is not None:
-            params["trunk_id"] = trunk_id
+        if limit is not None:
+            params["limit"] = limit
+        if offset is not None:
+            params["offset"] = offset
         params.update(filters)
 
         resp = self.client.session.get(
@@ -71,9 +74,9 @@ class OriginationUris:
 
     def get(self, uri_id: str):
         """
-        GET /api/v1/accounts/{account_id}/origination-uris/{uri_id}
+        GET /api/v1/account/{account_id}/origination-uris/{uri_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/origination-uris/{uri_id}"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/origination-uris/{uri_id}"
         resp = self.client.session.get(
             url, timeout=self.client.timeout, proxies=self.client.proxies
         )
@@ -81,9 +84,9 @@ class OriginationUris:
 
     def update(self, uri_id: str, **params: Any):
         """
-        PUT /api/v1/accounts/{account_id}/origination-uris/{uri_id}
+        PUT /api/v1/account/{account_id}/origination-uris/{uri_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/origination-uris/{uri_id}"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/origination-uris/{uri_id}"
         body: Dict[str, Any] = dict(params)
         resp = self.client.session.put(
             url, json=body, timeout=self.client.timeout, proxies=self.client.proxies
@@ -92,9 +95,9 @@ class OriginationUris:
 
     def delete(self, uri_id: str):
         """
-        DELETE /api/v1/accounts/{account_id}/origination-uris/{uri_id}
+        DELETE /api/v1/account/{account_id}/origination-uris/{uri_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/origination-uris/{uri_id}"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/origination-uris/{uri_id}"
         resp = self.client.session.delete(
             url, timeout=self.client.timeout, proxies=self.client.proxies
         )

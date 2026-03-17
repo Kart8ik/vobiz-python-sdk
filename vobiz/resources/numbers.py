@@ -7,7 +7,8 @@ class PhoneNumbers:
     """
     Vobiz Phone Numbers resource.
 
-    All endpoints are scoped to the authenticated account.
+    Implements inventory listing, purchase from inventory, and release,
+    as defined in the Vobiz phone number endpoints.
     """
 
     def __init__(self, client):
@@ -18,31 +19,27 @@ class PhoneNumbers:
         # For Vobiz, we treat the RestClient auth_id as the account_id
         return self.client.auth_id
 
-    def search(
+    def list_inventory(
         self,
-        country: str,
-        type: Optional[str] = None,
-        pattern: Optional[str] = None,
-        region: Optional[str] = None,
+        country: Optional[str] = None,
         page: Optional[int] = None,
-        size: Optional[int] = None,
+        per_page: Optional[int] = None,
         **filters: Any,
     ):
         """
-        GET /api/v1/Account/{account_id}/numbers/search
+        GET /api/v1/account/{auth_id}/inventory/numbers
+
+        Browse available phone numbers in inventory that are not assigned
+        to any account (auth_id IS NULL, status='active').
         """
-        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/numbers/search"
-        params: Dict[str, Any] = {"country": country}
-        if type is not None:
-            params["type"] = type
-        if pattern is not None:
-            params["pattern"] = pattern
-        if region is not None:
-            params["region"] = region
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/inventory/numbers"
+        params: Dict[str, Any] = {}
+        if country is not None:
+            params["country"] = country
         if page is not None:
             params["page"] = page
-        if size is not None:
-            params["size"] = size
+        if per_page is not None:
+            params["per_page"] = per_page
         params.update(filters)
 
         resp = self.client.session.get(
@@ -50,14 +47,21 @@ class PhoneNumbers:
         )
         return self.client.process_response("GET", resp)
 
-    def buy(self, phone_number: str, application_id: Optional[str] = None, **extra: Any):
+    def purchase_from_inventory(
+        self,
+        e164: str,
+        currency: Optional[str] = None,
+        **extra: Any,
+    ):
         """
-        POST /api/v1/Account/{account_id}/numbers/
+        POST /api/v1/account/{auth_id}/numbers/purchase-from-inventory
+
+        Purchase a phone number from inventory and assign it to the account.
         """
-        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/numbers/"
-        body: Dict[str, Any] = {"phone_number": phone_number}
-        if application_id is not None:
-            body["application_id"] = application_id
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/numbers/purchase-from-inventory"
+        body: Dict[str, Any] = {"e164": e164}
+        if currency is not None:
+            body["currency"] = currency
         body.update(extra)
 
         resp = self.client.session.post(
@@ -65,57 +69,38 @@ class PhoneNumbers:
         )
         return self.client.process_response("POST", resp)
 
-    def list(
-        self,
-        page: Optional[int] = None,
-        size: Optional[int] = None,
-        application_id: Optional[str] = None,
-        **filters: Any,
-    ):
+    def release(self, e164_number: str):
         """
-        GET /api/v1/Account/{account_id}/numbers/
-        """
-        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/numbers/"
-        params: Dict[str, Any] = {}
-        if page is not None:
-            params["page"] = page
-        if size is not None:
-            params["size"] = size
-        if application_id is not None:
-            params["application_id"] = application_id
-        params.update(filters)
+        DELETE /api/v1/account/{auth_id}/numbers/{e164_number}
 
-        resp = self.client.session.get(
-            url, params=params, timeout=self.client.timeout, proxies=self.client.proxies
-        )
-        return self.client.process_response("GET", resp)
-
-    def get(self, phone_number_id: str):
+        Release a phone number from the account back to inventory.
         """
-        GET /api/v1/Account/{account_id}/numbers/{phone_number_id}
-        """
-        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/numbers/{phone_number_id}"
-        resp = self.client.session.get(
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/numbers/{e164_number}"
+        resp = self.client.session.delete(
             url, timeout=self.client.timeout, proxies=self.client.proxies
         )
-        return self.client.process_response("GET", resp)
+        return self.client.process_response("DELETE", resp)
 
-    def update(self, phone_number_id: str, **params: Any):
+    def assign_to_trunk(self, e164_number: str, trunk_group_id: str):
         """
-        PUT /api/v1/Account/{account_id}/numbers/{phone_number_id}
+        POST /api/v1/account/{account_id}/numbers/{PHONE_NUMBER}/assign
+
+        Assign a phone number to a SIP trunk.
         """
-        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/numbers/{phone_number_id}"
-        body: Dict[str, Any] = dict(params)
-        resp = self.client.session.put(
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/numbers/{e164_number}/assign"
+        body: Dict[str, Any] = {"trunk_group_id": trunk_group_id}
+        resp = self.client.session.post(
             url, json=body, timeout=self.client.timeout, proxies=self.client.proxies
         )
-        return self.client.process_response("PUT", resp)
+        return self.client.process_response("POST", resp)
 
-    def delete(self, phone_number_id: str):
+    def unassign_from_trunk(self, e164_number: str):
         """
-        DELETE /api/v1/Account/{account_id}/numbers/{phone_number_id}
+        DELETE /api/v1/account/{account_id}/numbers/{PHONE_NUMBER}/assign
+
+        Unassign a phone number from its SIP trunk.
         """
-        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/numbers/{phone_number_id}"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/numbers/{e164_number}/assign"
         resp = self.client.session.delete(
             url, timeout=self.client.timeout, proxies=self.client.proxies
         )

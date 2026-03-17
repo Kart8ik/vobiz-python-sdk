@@ -25,36 +25,36 @@ def test_create_ip_acl(monkeypatch):
     client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
 
     client.ip_access_control_lists.create(
-        name="Office IPs",
-        description="Corporate offices",
-        ip_addresses=["203.0.113.1/32", "203.0.113.2/32"],
+        ip_address="203.0.113.50",
+        description="Office static IP",
+        enabled=True,
     )
 
     req = captured["request"]
     assert req.method == "POST"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/ip-access-control-lists/"
+        == "https://api.vobiz.ai/api/v1/account/MA_TEST/ip-acl"
     )
     body = json.loads(req.body.decode() if isinstance(req.body, (bytes, bytearray)) else req.body)
-    assert body["name"] == "Office IPs"
-    assert body["description"] == "Corporate offices"
-    assert body["ip_addresses"] == ["203.0.113.1/32", "203.0.113.2/32"]
+    assert body["ip_address"] == "203.0.113.50"
+    assert body["description"] == "Office static IP"
+    assert body["enabled"] is True
 
 
 def test_list_ip_acls(monkeypatch):
     captured = _capture(monkeypatch)
     client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
 
-    client.ip_access_control_lists.list(page=1, size=10)
+    client.ip_access_control_lists.list(limit=20, offset=0)
 
     req = captured["request"]
     assert req.method == "GET"
     assert req.url.startswith(
-        "https://api.vobiz.ai/api/v1/accounts/MA_TEST/ip-access-control-lists/"
+        "https://api.vobiz.ai/api/v1/account/MA_TEST/trunks/ip-acl"
     )
-    assert "page=1" in (req.url or "")
-    assert "size=10" in (req.url or "")
+    assert "limit=20" in (req.url or "")
+    assert "offset=0" in (req.url or "")
 
 
 def test_get_ip_acl(monkeypatch):
@@ -67,7 +67,7 @@ def test_get_ip_acl(monkeypatch):
     assert req.method == "GET"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/ip-access-control-lists/ACL_ID"
+        == "https://api.vobiz.ai/api/v1/account/MA_TEST/ip-acl/ACL_ID"
     )
 
 
@@ -75,16 +75,16 @@ def test_update_ip_acl(monkeypatch):
     captured = _capture(monkeypatch)
     client = vobiz.RestClient(auth_id="MA_TEST", auth_token="TOKEN")
 
-    client.ip_access_control_lists.update("ACL_ID", name="Updated Name")
+    client.ip_access_control_lists.update("ACL_ID", ip_address="192.168.1.200")
 
     req = captured["request"]
     assert req.method == "PUT"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/ip-access-control-lists/ACL_ID"
+        == "https://api.vobiz.ai/api/v1/account/MA_TEST/ip-acl/ACL_ID"
     )
     body = json.loads(req.body.decode() if isinstance(req.body, (bytes, bytearray)) else req.body)
-    assert body["name"] == "Updated Name"
+    assert body["ip_address"] == "192.168.1.200"
 
 
 def test_delete_ip_acl(monkeypatch):
@@ -97,6 +97,6 @@ def test_delete_ip_acl(monkeypatch):
     assert req.method == "DELETE"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/accounts/MA_TEST/ip-access-control-lists/ACL_ID"
+        == "https://api.vobiz.ai/api/v1/account/MA_TEST/ip-acl/ACL_ID"
     )
 

@@ -22,19 +22,24 @@ class Credentials:
         self,
         username: str,
         password: str,
-        trunk_id: Optional[str] = None,
+        enabled: Optional[bool] = None,
+        description: Optional[str] = None,
         **extra: Any,
     ):
         """
-        POST /api/v1/accounts/{account_id}/credentials/
+        POST /api/v1/account/{account_id}/credentials
+
+        Create a new SIP credential (username/password) for the account.
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/credentials/"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/credentials"
         body: Dict[str, Any] = {
             "username": username,
             "password": password,
         }
-        if trunk_id is not None:
-            body["trunk_id"] = trunk_id
+        if enabled is not None:
+            body["enabled"] = enabled
+        if description is not None:
+            body["description"] = description
         body.update(extra)
 
         resp = self.client.session.post(
@@ -44,22 +49,21 @@ class Credentials:
 
     def list(
         self,
-        page: Optional[int] = None,
-        size: Optional[int] = None,
-        trunk_id: Optional[str] = None,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
         **filters: Any,
     ):
         """
-        GET /api/v1/accounts/{account_id}/credentials/
+        GET /api/v1/account/{account_id}/trunks/credentials
+
+        Retrieve a paginated list of all credentials associated with the account.
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/credentials/"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/trunks/credentials"
         params: Dict[str, Any] = {}
-        if page is not None:
-            params["page"] = page
-        if size is not None:
-            params["size"] = size
-        if trunk_id is not None:
-            params["trunk_id"] = trunk_id
+        if limit is not None:
+            params["limit"] = limit
+        if offset is not None:
+            params["offset"] = offset
         params.update(filters)
 
         resp = self.client.session.get(
@@ -69,9 +73,9 @@ class Credentials:
 
     def get(self, credential_id: str):
         """
-        GET /api/v1/accounts/{account_id}/credentials/{credential_id}
+        GET /api/v1/account/{account_id}/credentials/{credential_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/credentials/{credential_id}"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/credentials/{credential_id}"
         resp = self.client.session.get(
             url, timeout=self.client.timeout, proxies=self.client.proxies
         )
@@ -79,9 +83,9 @@ class Credentials:
 
     def update(self, credential_id: str, **params: Any):
         """
-        PUT /api/v1/accounts/{account_id}/credentials/{credential_id}
+        PUT /api/v1/account/{account_id}/credentials/{credential_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/credentials/{credential_id}"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/credentials/{credential_id}"
         body: Dict[str, Any] = dict(params)
         resp = self.client.session.put(
             url, json=body, timeout=self.client.timeout, proxies=self.client.proxies
@@ -90,9 +94,9 @@ class Credentials:
 
     def delete(self, credential_id: str):
         """
-        DELETE /api/v1/accounts/{account_id}/credentials/{credential_id}
+        DELETE /api/v1/account/{account_id}/credentials/{credential_id}
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/credentials/{credential_id}"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/credentials/{credential_id}"
         resp = self.client.session.delete(
             url, timeout=self.client.timeout, proxies=self.client.proxies
         )
