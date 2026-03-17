@@ -706,6 +706,6 @@ class MultiPartyCallElement(VobizXMLElement):
             'transcriptionUrl': self.transcription_url
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }

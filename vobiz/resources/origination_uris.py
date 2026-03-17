@@ -50,6 +50,7 @@ class OriginationUris:
 
     def list(
         self,
+        trunk_id: Optional[str] = None,
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         **filters: Any,
@@ -58,9 +59,12 @@ class OriginationUris:
         GET /api/v1/account/{account_id}/trunks/origination-uris
 
         Retrieve a paginated list of origination URIs.
+        Optionally filter by trunk_id.
         """
         url = f"{VOBIZ_API_V1}/account/{self._account_id}/trunks/origination-uris"
         params: Dict[str, Any] = {}
+        if trunk_id is not None:
+            params["trunk_id"] = trunk_id
         if limit is not None:
             params["limit"] = limit
         if offset is not None:

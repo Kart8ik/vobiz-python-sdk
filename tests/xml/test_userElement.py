@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -14,11 +14,11 @@ class UserElementTest(TestCase, VobizXmlTestCase):
         send_on_preanswer = True
         sip_headers = 'head1=val1,head2=val2'
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
 
         response = element.add(
-            plivoxml.DialElement().add(
-                plivoxml.UserElement(content).set_send_digits(send_digits).set_send_on_preanswer(
+            vobizxml.DialElement().add(
+                vobizxml.UserElement(content).set_send_digits(send_digits).set_send_on_preanswer(
                     send_on_preanswer
                 ).set_sip_headers(sip_headers)
             )

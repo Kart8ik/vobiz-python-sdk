@@ -25,11 +25,11 @@ class EmphasisElement(VobizXMLElement):
 
     @level.setter
     def level(self, value):
-        self.__level = six.text_type(
+        self.__level = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_level(self, value):
         self.level = value
@@ -51,7 +51,7 @@ class EmphasisElement(VobizXMLElement):
         }
 
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }
 

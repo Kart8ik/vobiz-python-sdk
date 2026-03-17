@@ -1,16 +1,10 @@
 import sys
 from hmac import new as sign
 from hashlib import sha256
+from urllib.parse import urlparse, urlunparse, parse_qs
+from base64 import encodebytes as encode
+
 from .validators import *
-
-PY2 = True if sys.version_info.major == 2 else False
-
-if PY2:
-    from urlparse import urlparse, urlunparse, parse_qs
-    from base64 import encodestring as encode
-else:
-    from urllib.parse import urlparse, urlunparse, parse_qs
-    from base64 import encodebytes as encode
 
 
 def string_format(value):
@@ -20,8 +14,6 @@ def string_format(value):
         return str(value)
     if isinstance(value, list):
         return [string_format(x) for x in value]
-    if PY2 == True and isinstance(value, unicode):
-        return value.decode('utf-8')
     return value
 
 
@@ -90,25 +82,24 @@ def get_signature_v3(auth_token, base_url, nonce):
 
 
 @validate_args(
-    method=[all_of(of_type(six.text_type), is_in(('POST', 'GET'), case_sensitive=False))],
+    method=[all_of(of_type(str), is_in(('POST', 'GET'), case_sensitive=False))],
     uri=[is_url()],
     params=[optional(of_type(dict))],
-    nonce=[of_type(six.text_type)],
-    auth_token=[of_type(six.text_type)],
-    v3_signature=[of_type(six.text_type)],
+    nonce=[of_type(str)],
+    auth_token=[of_type(str)],
+    v3_signature=[of_type(str)],
 )
 def validate_v3_signature(method, uri, nonce, auth_token, v3_signature, params=None):
     """
-        Validates V3 Signature received from Plivo to your server
+    Validates V3 Signature received from Vobiz to your server.
 
-        :param method: Your callback method
-        :param uri: Your callback URL
-        :param params: Params received in callback from Plivo
-        :param nonce: X-Plivo-Signature-V3-Nonce header
-        :param v3_signature: X-Plivo-Signature-V3 header
-        :param auth_token: (Sub)Account auth token
-
-        :return: True if the request matches signature, False otherwise
+    :param method: Your callback method (GET or POST)
+    :param uri: Your callback URL
+    :param params: Params received in callback from Vobiz
+    :param nonce: X-Vobiz-Signature-V3-Nonce header
+    :param v3_signature: X-Vobiz-Signature-V3 header
+    :param auth_token: (Sub)Account auth token
+    :return: True if the request matches signature, False otherwise
     """
     if params is None:
         params = dict()

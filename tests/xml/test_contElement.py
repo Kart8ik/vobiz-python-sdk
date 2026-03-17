@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -49,9 +49,9 @@ class ContElementTest(TestCase, VobizXmlTestCase):
         content_w = "This is Test"
         role_w = "claws:VV0"
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.SpeakElement(
+            vobizxml.SpeakElement(
                 content_cont,
                 voice="Polly.Joey",
                 loop="2"

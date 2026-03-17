@@ -30,10 +30,10 @@ class SpeakElement(VobizXMLElement):
 
     @voice.setter
     def voice(self, value):
-        self.__voice = six.text_type(value) if value is not None else None
+        self.__voice = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_voice(self, value):
         self.voice = value
@@ -45,10 +45,10 @@ class SpeakElement(VobizXMLElement):
 
     @language.setter
     def language(self, value):
-        self.__language = six.text_type(value) if value is not None else None
+        self.__language = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_language(self, value):
         self.language = value
@@ -63,7 +63,7 @@ class SpeakElement(VobizXMLElement):
         self.__loop = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_loop(self, value):
         self.loop = value
@@ -90,7 +90,7 @@ class SpeakElement(VobizXMLElement):
             'loop': self.loop,
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }
 

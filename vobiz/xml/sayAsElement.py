@@ -12,11 +12,11 @@ class SayAsElement(VobizXMLElement):
 
     @interpret_as.setter
     def interpret_as(self, value):
-        self.__interpret_as = six.text_type(
+        self.__interpret_as = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_interpret_as(self, value):
         self.interpret_as = value
@@ -28,11 +28,11 @@ class SayAsElement(VobizXMLElement):
 
     @format.setter
     def format(self, value):
-        self.__format = six.text_type(
+        self.__format = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_format(self, value):
         self.format = value
@@ -56,6 +56,6 @@ class SayAsElement(VobizXMLElement):
             'format': self.format,
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }

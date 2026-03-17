@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -55,9 +55,9 @@ class PreAnswerElementTest(TestCase, VobizXmlTestCase):
         content_dtmf = 'this is test'
         async_dtmf = True
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.PreAnswerElement().add_speak(
+            vobizxml.PreAnswerElement().add_speak(
                 content=content_speak,
                 voice=voice_speak,
                 language=language_speak,

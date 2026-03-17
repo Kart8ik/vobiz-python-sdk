@@ -5,31 +5,21 @@ from datetime import datetime
 
 from hmac import new as hnew
 from hashlib import sha256
+from urllib.parse import urlparse, urlunparse
+from base64 import encodebytes as base64_encode
+from inspect import getfullargspec as getargspec
+
 from .signature_v3 import validate_v3_signature
 
-try:
-    from urllib.parse import urlparse, urlunparse
-except ImportError:
-    from urlparse import urlparse, urlunparse
-
-try:
-    from base64 import encodebytes as base64_encode
-except ImportError:
-    from base64 import encodestring as base64_encode
-
-try:
-    from inspect import getfullargspec as getargspec
-except ImportError:
-    from inspect import getargspec as getargspec
 
 def validate_signature(uri, nonce, signature, auth_token=''):
     """
-    Validates requests made by Plivo to your servers.
+    Validates requests made by Vobiz to your servers.
 
     :param uri: Your server URL
-    :param nonce: X-Plivo-Signature-V2-Nonce
-    :param signature: X-Plivo-Signature-V2 header
-    :param auth_token: Plivo Auth token
+    :param nonce: X-Vobiz-Signature-V2-Nonce
+    :param signature: X-Vobiz-Signature-V2 header
+    :param auth_token: Vobiz Auth token
     :return: True if the request matches signature, False otherwise
     """
 
@@ -76,7 +66,7 @@ def to_param_dict(func, vals, exclude_none=True, func_args_check=True):
     pd = {
         re.sub(r'^(.*)_+$', r'\1', key): value
         for key, value in vals.items()
-        if key != 'self' and (key in arg_names or func_args_check==False) and (
+        if key != 'self' and (key in arg_names or func_args_check == False) and (
             value is not None or exclude_none is False)
     }
     return pd

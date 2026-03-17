@@ -12,10 +12,10 @@ class HangupElement(VobizXMLElement):
 
     @reason.setter
     def reason(self, value):
-        self.__reason = six.text_type(value) if value is not None else None
+        self.__reason = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_reason(self, value):
         self.reason = value
@@ -30,7 +30,7 @@ class HangupElement(VobizXMLElement):
         self.__schedule = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_schedule(self, value):
         self.schedule = value
@@ -52,6 +52,6 @@ class HangupElement(VobizXMLElement):
             'schedule': self.schedule,
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }

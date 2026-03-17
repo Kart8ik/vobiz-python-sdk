@@ -1,71 +1,48 @@
 from typing import Any, Dict, Optional
 
-VOBIZ_API_V1 = "https://api.vobiz.ai/api/v1"
-
 
 class Recordings:
     """
     Vobiz Recordings resource.
 
-    All endpoints are scoped to the authenticated account.
+    Endpoint: https://api.vobiz.ai/api/v1/Account/{auth_id}/Recording/
     """
 
     def __init__(self, client):
         self.client = client
 
-    @property
-    def _account_id(self) -> str:
-        # For Vobiz, we treat the RestClient auth_id as the account_id
-        return self.client.auth_id
-
     def list(
         self,
-        page: Optional[int] = None,
-        size: Optional[int] = None,
-        call_id: Optional[str] = None,
-        from_number: Optional[str] = None,
-        to_number: Optional[str] = None,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+        call_uuid: Optional[str] = None,
+        recording_type: Optional[str] = None,
         **filters: Any,
     ):
         """
-        GET /api/v1/accounts/{account_id}/recordings/
+        GET /api/v1/Account/{auth_id}/Recording/
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/recordings/"
         params: Dict[str, Any] = {}
-        if page is not None:
-            params["page"] = page
-        if size is not None:
-            params["size"] = size
-        if call_id is not None:
-            params["call_id"] = call_id
-        if from_number is not None:
-            params["from"] = from_number
-        if to_number is not None:
-            params["to"] = to_number
-        # allow arbitrary extra server-side filters
+        if limit is not None:
+            params["limit"] = limit
+        if offset is not None:
+            params["offset"] = offset
+        if call_uuid is not None:
+            params["call_uuid"] = call_uuid
+        if recording_type is not None:
+            params["recording_type"] = recording_type
         params.update(filters)
 
-        resp = self.client.session.get(
-            url, params=params, timeout=self.client.timeout, proxies=self.client.proxies
-        )
-        return self.client.process_response("GET", resp)
+        return self.client.request("GET", ("Recording",), data=params)
 
     def get(self, recording_id: str):
         """
-        GET /api/v1/accounts/{account_id}/recordings/{recording_id}
+        GET /api/v1/Account/{auth_id}/Recording/{recording_id}/
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/recordings/{recording_id}"
-        resp = self.client.session.get(
-            url, timeout=self.client.timeout, proxies=self.client.proxies
-        )
-        return self.client.process_response("GET", resp)
+        return self.client.request("GET", ("Recording", recording_id))
 
     def delete(self, recording_id: str):
         """
-        DELETE /api/v1/accounts/{account_id}/recordings/{recording_id}
+        DELETE /api/v1/Account/{auth_id}/Recording/{recording_id}/
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/recordings/{recording_id}"
-        resp = self.client.session.delete(
-            url, timeout=self.client.timeout, proxies=self.client.proxies
-        )
-        return self.client.process_response("DELETE", resp)
+        return self.client.request("DELETE", ("Recording", recording_id))

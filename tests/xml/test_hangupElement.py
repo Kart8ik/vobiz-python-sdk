@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -10,8 +10,8 @@ class HangupElementTest(TestCase, VobizXmlTestCase):
         reason = "rejected"
         expected_response = '<Response><Hangup reason="rejected" schedule="60"/></Response>'
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.HangupElement().set_reason(reason).set_schedule(schedule)
+            vobizxml.HangupElement().set_reason(reason).set_schedule(schedule)
         ).to_string(False)
         self.assertXmlEqual(response, expected_response)

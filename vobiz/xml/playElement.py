@@ -15,7 +15,7 @@ class PlayElement(VobizXMLElement):
         self.__loop = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_loop(self, value):
         self.loop = value
@@ -36,6 +36,6 @@ class PlayElement(VobizXMLElement):
             'loop': self.loop,
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }

@@ -22,10 +22,10 @@ class GetInputElement(VobizXMLElement):
 
     @action.setter
     def action(self, value):
-        self.__action = six.text_type(value) if value is not None else None
+        self.__action = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_action(self, value):
         self.action = value
@@ -37,10 +37,10 @@ class GetInputElement(VobizXMLElement):
 
     @method.setter
     def method(self, value):
-        self.__method = six.text_type(value) if value is not None else None
+        self.__method = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_method(self, value):
         self.method = value
@@ -52,10 +52,10 @@ class GetInputElement(VobizXMLElement):
 
     @input_type.setter
     def input_type(self, value):
-        self.__input_type = six.text_type(value) if value is not None else None
+        self.__input_type = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_input_type(self, value):
         self.input_type = value
@@ -70,7 +70,7 @@ class GetInputElement(VobizXMLElement):
         self.__execution_timeout = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_execution_timeout(self, value):
         self.execution_timeout = value
@@ -85,7 +85,7 @@ class GetInputElement(VobizXMLElement):
         self.__digit_end_timeout = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_digit_end_timeout(self, value):
         self.digit_end_timeout = value
@@ -100,7 +100,7 @@ class GetInputElement(VobizXMLElement):
         self.__speech_end_timeout = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_speech_end_timeout(self, value):
         self.speech_end_timeout = value
@@ -112,11 +112,11 @@ class GetInputElement(VobizXMLElement):
 
     @finish_on_key.setter
     def finish_on_key(self, value):
-        self.__finish_on_key = six.text_type(
+        self.__finish_on_key = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_finish_on_key(self, value):
         self.finish_on_key = value
@@ -131,7 +131,7 @@ class GetInputElement(VobizXMLElement):
         self.__num_digits = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_num_digits(self, value):
         self.num_digits = value
@@ -143,11 +143,11 @@ class GetInputElement(VobizXMLElement):
 
     @speech_model.setter
     def speech_model(self, value):
-        self.__speech_model = six.text_type(
+        self.__speech_model = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_speech_model(self, value):
         self.speech_model = value
@@ -159,11 +159,11 @@ class GetInputElement(VobizXMLElement):
 
     @hints.setter
     def hints(self, value):
-        self.__hints = six.text_type(
+        self.__hints = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_hints(self, value):
         self.hints = value
@@ -175,11 +175,11 @@ class GetInputElement(VobizXMLElement):
 
     @language.setter
     def language(self, value):
-        self.__language = six.text_type(
+        self.__language = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_language(self, value):
         self.language = value
@@ -191,11 +191,11 @@ class GetInputElement(VobizXMLElement):
 
     @interim_speech_results_callback.setter
     def interim_speech_results_callback(self, value):
-        self.__interim_speech_results_callback = six.text_type(
+        self.__interim_speech_results_callback = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_interim_speech_results_callback(self, value):
         self.interim_speech_results_callback = value
@@ -207,11 +207,11 @@ class GetInputElement(VobizXMLElement):
 
     @interim_speech_results_callback_method.setter
     def interim_speech_results_callback_method(self, value):
-        self.__interim_speech_results_callback_method = six.text_type(
+        self.__interim_speech_results_callback_method = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_interim_speech_results_callback_method(self, value):
         self.interim_speech_results_callback_method = value
@@ -320,7 +320,7 @@ class GetInputElement(VobizXMLElement):
             'profanityFilter': self.profanity_filter
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }
 

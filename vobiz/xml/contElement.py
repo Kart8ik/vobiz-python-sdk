@@ -1,4 +1,3 @@
-import six
 
 from vobiz.xml import (
     VobizXMLElement,
@@ -33,7 +32,7 @@ class ContElement(VobizXMLElement):
     def to_dict(self):
         d = {}
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
             }
 

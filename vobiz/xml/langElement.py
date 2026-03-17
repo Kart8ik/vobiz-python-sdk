@@ -26,11 +26,11 @@ class LangElement(VobizXMLElement):
 
     @xmllang.setter
     def xmllang(self, value):
-        self.__xmllang = six.text_type(
+        self.__xmllang = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_xmllang(self, value):
         self.xmllang = value
@@ -52,7 +52,7 @@ class LangElement(VobizXMLElement):
         }
 
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
             }
 

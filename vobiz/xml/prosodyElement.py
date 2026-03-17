@@ -31,11 +31,11 @@ class ProsodyElement(VobizXMLElement):
 
     @volume.setter
     def volume(self, value):
-        self.__volume = six.text_type(
+        self.__volume = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_volume(self, value):
         self.volume = value
@@ -47,11 +47,11 @@ class ProsodyElement(VobizXMLElement):
 
     @rate.setter
     def rate(self, value):
-        self.__rate = six.text_type(
+        self.__rate = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_rate(self, value):
         self.rate = value
@@ -63,11 +63,11 @@ class ProsodyElement(VobizXMLElement):
 
     @pitch.setter
     def pitch(self, value):
-        self.__pitch = six.text_type(
+        self.__pitch = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_pitch(self, value):
         self.pitch = value
@@ -94,7 +94,7 @@ class ProsodyElement(VobizXMLElement):
         }
 
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }
 

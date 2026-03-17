@@ -27,11 +27,11 @@ class ConferenceElement(VobizXMLElement):
 
     @enter_sound.setter
     def enter_sound(self, value):
-        self.__enter_sound = six.text_type(
+        self.__enter_sound = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_enter_sound(self, value):
         self.enter_sound = value
@@ -43,10 +43,10 @@ class ConferenceElement(VobizXMLElement):
 
     @exit_sound.setter
     def exit_sound(self, value):
-        self.__exit_sound = six.text_type(value) if value is not None else None
+        self.__exit_sound = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_exit_sound(self, value):
         self.exit_sound = value
@@ -105,10 +105,10 @@ class ConferenceElement(VobizXMLElement):
 
     @wait_sound.setter
     def wait_sound(self, value):
-        self.__wait_sound = six.text_type(value) if value is not None else None
+        self.__wait_sound = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_wait_sound(self, value):
         self.wait_sound = value
@@ -123,7 +123,7 @@ class ConferenceElement(VobizXMLElement):
         self.__max_members = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_max_members(self, value):
         self.max_members = value
@@ -150,11 +150,11 @@ class ConferenceElement(VobizXMLElement):
 
     @record_file_format.setter
     def record_file_format(self, value):
-        self.__record_file_format = six.text_type(
+        self.__record_file_format = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_record_file_format(self, value):
         self.record_file_format = value
@@ -169,7 +169,7 @@ class ConferenceElement(VobizXMLElement):
         self.__time_limit = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_time_limit(self, value):
         self.time_limit = value
@@ -196,10 +196,10 @@ class ConferenceElement(VobizXMLElement):
 
     @action.setter
     def action(self, value):
-        self.__action = six.text_type(value) if value is not None else None
+        self.__action = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_action(self, value):
         self.action = value
@@ -211,10 +211,10 @@ class ConferenceElement(VobizXMLElement):
 
     @method.setter
     def method(self, value):
-        self.__method = six.text_type(value) if value is not None else None
+        self.__method = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_method(self, value):
         self.method = value
@@ -226,11 +226,11 @@ class ConferenceElement(VobizXMLElement):
 
     @callback_url.setter
     def callback_url(self, value):
-        self.__callback_url = six.text_type(
+        self.__callback_url = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_callback_url(self, value):
         self.callback_url = value
@@ -242,11 +242,11 @@ class ConferenceElement(VobizXMLElement):
 
     @callback_method.setter
     def callback_method(self, value):
-        self.__callback_method = six.text_type(
+        self.__callback_method = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_callback_method(self, value):
         self.callback_method = value
@@ -258,11 +258,11 @@ class ConferenceElement(VobizXMLElement):
 
     @digits_match.setter
     def digits_match(self, value):
-        self.__digits_match = six.text_type(
+        self.__digits_match = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_digits_match(self, value):
         self.digits_match = value
@@ -319,11 +319,11 @@ class ConferenceElement(VobizXMLElement):
 
     @send_digits.setter
     def send_digits(self, value):
-        self.__send_digits = six.text_type(
+        self.__send_digits = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_send_digits(self, value):
         self.send_digits = value
@@ -335,11 +335,11 @@ class ConferenceElement(VobizXMLElement):
 
     @record_when_alone.setter
     def record_when_alone(self, value):
-        self.__record_when_alone = six.text_type(
+        self.__record_when_alone = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_record_when_alone(self, value):
         self.record_when_alone = value
@@ -351,11 +351,11 @@ class ConferenceElement(VobizXMLElement):
 
     @transcription_type.setter
     def transcription_type(self, value):
-        self.__transcription_type = six.text_type(
+        self.__transcription_type = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_transcription_type(self, value):
         self.transcription_type = value
@@ -367,11 +367,11 @@ class ConferenceElement(VobizXMLElement):
 
     @transcription_url.setter
     def transcription_url(self, value):
-        self.__transcription_url = six.text_type(
+        self.__transcription_url = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_transcription_url(self, value):
         self.transcription_url = value
@@ -383,11 +383,11 @@ class ConferenceElement(VobizXMLElement):
 
     @transcription_method.setter
     def transcription_method(self, value):
-        self.__transcription_method = six.text_type(
+        self.__transcription_method = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_transcription_method(self, value):
         self.transcription_method = value
@@ -480,6 +480,6 @@ class ConferenceElement(VobizXMLElement):
             'transcriptionMethod': self.transcription_method,
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }

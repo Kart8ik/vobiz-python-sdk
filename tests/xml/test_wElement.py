@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -41,10 +41,10 @@ class WElementTest(TestCase, VobizXmlTestCase):
         content_sub = "This is Test"
         alias_sub = "World Wide Web Consortium"
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.SpeakElement("").add(
-            plivoxml.WElement(content).set_role(
+            vobizxml.SpeakElement("").add(
+            vobizxml.WElement(content).set_role(
                 role
             ).add_break(
                 strength=strength_break

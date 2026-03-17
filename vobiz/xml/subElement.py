@@ -12,11 +12,11 @@ class SubElement(VobizXMLElement):
 
     @alias.setter
     def alias(self, value):
-        self.__alias = six.text_type(
+        self.__alias = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_alias(self, value):
         self.alias = value
@@ -38,6 +38,6 @@ class SubElement(VobizXMLElement):
         }
 
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -9,10 +9,10 @@ class SubElementTest(TestCase, VobizXmlTestCase):
         expected_response = '<Response><Speak>substitution example <sub alias="World Wide Web Consortium">W3C</sub></Speak></Response>'
         alias="World Wide Web Consortium"
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.SpeakElement("substitution example ").add(
-                plivoxml.SubElement("W3C").set_alias(alias)
+            vobizxml.SpeakElement("substitution example ").add(
+                vobizxml.SubElement("W3C").set_alias(alias)
             )
         ).to_string(False)
         self.assertXmlEqual(response, expected_response)

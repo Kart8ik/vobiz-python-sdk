@@ -1,5 +1,4 @@
 from lxml import etree
-import six
 from vobiz.exceptions import VobizXMLError
 
 
@@ -36,9 +35,9 @@ class VobizXMLElement(object):
                 self._name, **self.to_dict())
         if self.content:
             try:
-                if six.PY2 and isinstance(self.content, str):
+                if False:
                     e.text = self.content.decode()
-                elif six.PY3 and isinstance(self.content, bytes):
+                elif isinstance(self.content, bytes):
                     e.text = self.content.decode()
                 else:
                     e.text = self.content

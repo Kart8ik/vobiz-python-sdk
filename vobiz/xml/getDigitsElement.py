@@ -22,10 +22,10 @@ class GetDigitsElement(VobizXMLElement):
 
     @action.setter
     def action(self, value):
-        self.__action = six.text_type(value) if value is not None else None
+        self.__action = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_action(self, value):
         self.action = value
@@ -37,10 +37,10 @@ class GetDigitsElement(VobizXMLElement):
 
     @method.setter
     def method(self, value):
-        self.__method = six.text_type(value) if value is not None else None
+        self.__method = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_method(self, value):
         self.method = value
@@ -55,7 +55,7 @@ class GetDigitsElement(VobizXMLElement):
         self.__timeout = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_timeout(self, value):
         self.timeout = value
@@ -70,7 +70,7 @@ class GetDigitsElement(VobizXMLElement):
         self.__digit_timeout = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_digit_timeout(self, value):
         self.digit_timeout = value
@@ -82,11 +82,11 @@ class GetDigitsElement(VobizXMLElement):
 
     @finish_on_key.setter
     def finish_on_key(self, value):
-        self.__finish_on_key = six.text_type(
+        self.__finish_on_key = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_finish_on_key(self, value):
         self.finish_on_key = value
@@ -101,7 +101,7 @@ class GetDigitsElement(VobizXMLElement):
         self.__num_digits = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_num_digits(self, value):
         self.num_digits = value
@@ -116,7 +116,7 @@ class GetDigitsElement(VobizXMLElement):
         self.__retries = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_retries(self, value):
         self.retries = value
@@ -158,11 +158,11 @@ class GetDigitsElement(VobizXMLElement):
 
     @valid_digits.setter
     def valid_digits(self, value):
-        self.__valid_digits = six.text_type(
+        self.__valid_digits = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_valid_digits(self, value):
         self.valid_digits = value
@@ -174,11 +174,11 @@ class GetDigitsElement(VobizXMLElement):
 
     @invalid_digits_sound.setter
     def invalid_digits_sound(self, value):
-        self.__invalid_digits_sound = six.text_type(
+        self.__invalid_digits_sound = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_invalid_digits_sound(self, value):
         self.invalid_digits_sound = value
@@ -245,7 +245,7 @@ class GetDigitsElement(VobizXMLElement):
             'log': self.log,
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }
 

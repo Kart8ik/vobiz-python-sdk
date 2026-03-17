@@ -12,11 +12,11 @@ class BreakElement(VobizXMLElement):
 
     @strength.setter
     def strength(self, value):
-        self.__strength = six.text_type(
+        self.__strength = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_strength(self, value):
         self.strength = value
@@ -28,11 +28,11 @@ class BreakElement(VobizXMLElement):
 
     @time.setter
     def time(self, value):
-        self.__time = six.text_type(
+        self.__time = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_time(self, value):
         self.time = value
@@ -57,6 +57,6 @@ class BreakElement(VobizXMLElement):
         }
 
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }

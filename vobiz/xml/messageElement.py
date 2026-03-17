@@ -12,10 +12,10 @@ class MessageElement(VobizXMLElement):
 
     @src.setter
     def src(self, value):
-        self.__src = six.text_type(value) if value is not None else None
+        self.__src = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_src(self, value):
         self.src = value
@@ -27,10 +27,10 @@ class MessageElement(VobizXMLElement):
 
     @dst.setter
     def dst(self, value):
-        self.__dst = six.text_type(value) if value is not None else None
+        self.__dst = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_dst(self, value):
         self.dst = value
@@ -42,10 +42,10 @@ class MessageElement(VobizXMLElement):
 
     @type.setter
     def type(self, value):
-        self.__type = six.text_type(value) if value is not None else None
+        self.__type = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_type(self, value):
         self.type = value
@@ -57,11 +57,11 @@ class MessageElement(VobizXMLElement):
 
     @callback_url.setter
     def callback_url(self, value):
-        self.__callback_url = six.text_type(
+        self.__callback_url = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_callback_url(self, value):
         self.callback_url = value
@@ -73,11 +73,11 @@ class MessageElement(VobizXMLElement):
 
     @callback_method.setter
     def callback_method(self, value):
-        self.__callback_method = six.text_type(
+        self.__callback_method = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_callback_method(self, value):
         self.callback_method = value
@@ -110,6 +110,6 @@ class MessageElement(VobizXMLElement):
             'callbackMethod': self.callback_method,
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }

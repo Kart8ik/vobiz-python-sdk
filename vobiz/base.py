@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Base classes, used to deal with every Plivo resource.
+Base classes, used to deal with every Vobiz resource.
 """
 
 import pprint
@@ -17,11 +17,11 @@ class Meta:
         self.total_count = None
 
 
-class PlivoGenericResponse(object):
+class VobizGenericResponse(object):
     """A generic response to cover it all!
 
     This provides a generic blanket response based on what is received from
-    Plivo servers.
+    Vobiz servers.
 
     This will be used only during POST and DELETE requests.
     """
@@ -51,88 +51,13 @@ class ResponseObject(object):
         self.__dict__.__setitem__(key, value)
 
     def __delitem__(self, key):
-        del self.__dict__
+        del self.__dict__[key]
 
     def __str__(self):
         return pprint.pformat(self.__dict__)
 
     def __repr__(self):
         return pprint.pformat(self.__dict__)
-
-
-class ListSessionResponseObject(ResponseObject):
-    def __init__(self, client, dct):
-        super(ListSessionResponseObject, self).__init__(dct)
-        self.error = dct.get('error', None)
-        self.sessions = dct.get('sessions', None)
-        self.meta = dct.get('meta', None)
-        self.apiID = dct.get('api_id', None)
-    def __iter__(self):
-        if self.sessions is not None:
-            return self.sessions.__iter__()
-        else:
-            return iter([])
-
-    def __len__(self):
-        if self.sessions is not None:
-            return len(self.sessions)
-        else:
-            return 0  # Return 0 for error case
-
-    def __str__(self):
-        if self.sessions is not None:
-            response_dict = {'api_id': self.apiID, 'meta': self.meta, 'sessions': self.sessions}
-            return pprint.pformat(response_dict)
-        else:
-            return str(self.error)  # Display error message for error case
-
-    def __repr__(self):
-        if self.sessions is not None:
-            response_dict = {'api_id': self.apiID, 'meta': self.meta, 'sessions': [session for session in self.sessions]}
-            return str(response_dict)
-        else:
-            return str(self.error)  # Display error message for error case
-
-    def has_error(self):
-        return self.error is not None
-
-
-class ListMessagesResponseObject(ResponseObject):
-    def __init__(self, client, dct):
-        super(ListMessagesResponseObject, self).__init__(dct)
-        self.error = dct.get('error', None)
-        self.objects = dct.get('objects', None)
-        self.meta = dct.get('meta', None)
-        self.apiID = dct.get('api_id', None)
-
-    def __iter__(self):
-        if self.objects is not None:
-            return self.objects.__iter__()
-        else:
-            return iter([])
-
-    def __len__(self):
-        if self.objects is not None:
-            return len(self.objects)
-        else:
-            return 0  # Return 0 for error case
-
-    def __str__(self):
-        if self.objects is not None:
-            response_dict = {'api_id': self.apiID, 'meta': self.meta, 'objects': self.objects}
-            return pprint.pformat(response_dict)
-        else:
-            return str(self.error)  # Display error message for error case
-
-    def __repr__(self):
-        if self.objects is not None:
-            response_dict = {'api_id': self.apiID, 'meta': self.meta, 'objects': [session for session in self.objects]}
-            return str(response_dict)
-        else:
-            return str(self.error)  # Display error message for error case
-
-    def has_error(self):
-        return self.error is not None
 
 
 class ListResponseObject(ResponseObject):
@@ -151,48 +76,12 @@ class ListResponseObject(ResponseObject):
     def __repr__(self):
         return str([object for object in self.objects])
 
-class ListTollfreeVerificationResponseObject(ResponseObject):
-    def __init__(self, client, dct):
-        super(ListTollfreeVerificationResponseObject, self).__init__(dct)
-        self.error = dct.get('error', None)
-        self.objects = dct.get('objects', [])
-        self.meta = dct.get('meta', None)
-        self.apiID = dct.get('api_id', None)
 
-    def __iter__(self):
-        if self.objects is not None:
-            return self.objects.__iter__()
-        else:
-            return iter([])
+class VobizResource(ResponseObject):
+    """The Vobiz resource object
 
-    def __len__(self):
-        if self.objects is not None:
-            return len(self.objects)
-        else:
-            return 0  # Return 0 for error case
-
-    def __str__(self):
-        if self.objects is not None:
-            response_dict = {'api_id': self.apiID, 'meta': self.meta, 'objects': self.objects}
-            return pprint.pformat(response_dict)
-        else:
-            return str(self.error)  # Display error message for error case
-
-    def __repr__(self):
-        if self.objects is not None:
-            response_dict = {'api_id': self.apiID, 'meta': self.meta, 'objects': [session for session in self.objects]}
-            return str(response_dict)
-        else:
-            return str(self.error)  # Display error message for error case
-
-    def has_error(self):
-        return self.error is not None
-
-class PlivoResource(ResponseObject):
-    """The Plivo resource object
-
-    This provides an interface to deal with all Plivo resources and
-    sub-resources
+    This provides an interface to deal with all Vobiz resources and
+    sub-resources.
     """
 
     _identifier_string = None
@@ -207,26 +96,17 @@ class PlivoResource(ResponseObject):
     def __init__(self, client, data):
         """Sets up the resource URI along with a hack for Account resource"""
 
-        super(PlivoResource, self).__init__(data)
+        super(VobizResource, self).__init__(data)
         self._name = self._name or self.__class__.__name__
         self.client = client
 
     def __str__(self):
-        # return '{class_name}({identifier})'.format(
-        #    class_name=self._name, identifier=self.id)
-
         return pprint.pformat(self.__dict__)
 
     def __repr__(self):
         return self.__str__()
 
     def update(self, params, path, **kwargs):
-        """
-        Test Update
-        :param params:
-        :param path:
-        :param random:
-        """
         self.client.request('POST', params, path, **kwargs)
 
     def _update(self, params):
@@ -280,7 +160,7 @@ class PlivoResource(ResponseObject):
                 'Cannot delete a {resource_type} resource without an '
                 'identifier'.format(resource_type=self._name))
 
-        return PlivoGenericResponse(
+        return VobizGenericResponse(
             self.client.send_request(self.__resource_uri, method='DELETE'))
 
     def get(self):
@@ -305,15 +185,16 @@ class PlivoResource(ResponseObject):
         if self._identifier_string:
             id_string = self._identifier_string
 
-        return PlivoGenericResponse(
+        return VobizGenericResponse(
             self.client.send_request(
                 self.__resource_uri, data=params, method='POST'), id_string)
 
 
-class SecondaryPlivoResource(PlivoResource):
+class SecondaryVobizResource(VobizResource):
     """
-        SecondaryPlivoResource resource object
-        This provides an interface to deal with resources where identifier is has a mid level parent
+    SecondaryVobizResource resource object.
+    Provides an interface to deal with resources where the identifier
+    has a mid-level parent.
     """
     _secondary_identifier_string = None
 
@@ -325,13 +206,12 @@ class SecondaryPlivoResource(PlivoResource):
         return value
 
     def __init__(self, client, data):
-        """Sets up the PlivoResource"""
-        super(SecondaryPlivoResource, self).__init__(client, data)
+        super(VobizResource, self).__init__(client, data)
         self._name = self._name or self.__class__.__name__
         self.client = client
 
 
-class PlivoResourceInterface(object):
+class VobizResourceInterface(object):
     _iterable = True
 
     def __init__(self, client, **kwargs):

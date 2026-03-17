@@ -17,10 +17,10 @@ class DialElement(VobizXMLElement):
 
     @action.setter
     def action(self, value):
-        self.__action = six.text_type(value) if value is not None else None
+        self.__action = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_action(self, value):
         self.action = value
@@ -32,10 +32,10 @@ class DialElement(VobizXMLElement):
 
     @method.setter
     def method(self, value):
-        self.__method = six.text_type(value) if value is not None else None
+        self.__method = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_method(self, value):
         self.method = value
@@ -65,7 +65,7 @@ class DialElement(VobizXMLElement):
         self.__time_limit = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_time_limit(self, value):
         self.time_limit = value
@@ -80,7 +80,7 @@ class DialElement(VobizXMLElement):
         self.__timeout = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_timeout(self, value):
         self.timeout = value
@@ -92,10 +92,10 @@ class DialElement(VobizXMLElement):
 
     @caller_id.setter
     def caller_id(self, value):
-        self.__caller_id = six.text_type(value) if value is not None else None
+        self.__caller_id = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_caller_id(self, value):
         self.caller_id = value
@@ -107,11 +107,11 @@ class DialElement(VobizXMLElement):
 
     @caller_name.setter
     def caller_name(self, value):
-        self.__caller_name = six.text_type(
+        self.__caller_name = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_caller_name(self, value):
         self.caller_name = value
@@ -123,11 +123,11 @@ class DialElement(VobizXMLElement):
 
     @confirm_sound.setter
     def confirm_sound(self, value):
-        self.__confirm_sound = six.text_type(
+        self.__confirm_sound = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_confirm_sound(self, value):
         self.confirm_sound = value
@@ -139,11 +139,11 @@ class DialElement(VobizXMLElement):
 
     @confirm_timeout.setter
     def confirm_timeout(self, value):
-        self.confirm_timeout = six.text_type(
+        self.confirm_timeout = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def confirm_timeout(self, value):
         self.confirm_timeout = value
@@ -155,11 +155,11 @@ class DialElement(VobizXMLElement):
 
     @confirm_key.setter
     def confirm_key(self, value):
-        self.__confirm_key = six.text_type(
+        self.__confirm_key = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_confirm_key(self, value):
         self.confirm_key = value
@@ -171,10 +171,10 @@ class DialElement(VobizXMLElement):
 
     @dial_music.setter
     def dial_music(self, value):
-        self.__dial_music = six.text_type(value) if value is not None else None
+        self.__dial_music = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_dial_music(self, value):
         self.dial_music = value
@@ -186,11 +186,11 @@ class DialElement(VobizXMLElement):
 
     @callback_url.setter
     def callback_url(self, value):
-        self.__callback_url = six.text_type(
+        self.__callback_url = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_callback_url(self, value):
         self.callback_url = value
@@ -202,11 +202,11 @@ class DialElement(VobizXMLElement):
 
     @callback_method.setter
     def callback_method(self, value):
-        self.__callback_method = six.text_type(
+        self.__callback_method = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_callback_method(self, value):
         self.callback_method = value
@@ -233,11 +233,11 @@ class DialElement(VobizXMLElement):
 
     @digits_match.setter
     def digits_match(self, value):
-        self.__digits_match = six.text_type(
+        self.__digits_match = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_digits_match(self, value):
         self.digits_match = value
@@ -249,11 +249,11 @@ class DialElement(VobizXMLElement):
 
     @digits_match_b_leg.setter
     def digits_match_b_leg(self, value):
-        self.__digits_match_b_leg = six.text_type(
+        self.__digits_match_b_leg = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_digits_match_b_leg(self, value):
         self.digits_match_b_leg = value
@@ -265,11 +265,11 @@ class DialElement(VobizXMLElement):
 
     @sip_headers.setter
     def sip_headers(self, value):
-        self.__sip_headers = six.text_type(
+        self.__sip_headers = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_sip_headers(self, value):
         self.sip_headers = value
@@ -336,7 +336,7 @@ class DialElement(VobizXMLElement):
             'sipHeaders': self.sip_headers,
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
             }
 

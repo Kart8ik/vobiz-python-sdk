@@ -1,5 +1,5 @@
 from unittest import TestCase
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -37,9 +37,9 @@ class GetInputElementTest(TestCase, VobizXmlTestCase):
         loop_play = 2
         content_play = 'This is test'
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.GetInputElement().set_action(action).set_method(method).
+            vobizxml.GetInputElement().set_action(action).set_method(method).
             set_input_type(inputType).set_execution_timeout(executionTimeout).
             set_digit_end_timeout(digitEndTimeout).set_speech_end_timeout(speechEndTimeout).
             set_finish_on_key(finishOnKey).set_num_digits(numDigits).

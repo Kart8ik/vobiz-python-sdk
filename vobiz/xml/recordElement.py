@@ -12,10 +12,10 @@ class RecordElement(VobizXMLElement):
 
     @action.setter
     def action(self, value):
-        self.__action = six.text_type(value) if value is not None else None
+        self.__action = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_action(self, value):
         self.action = value
@@ -27,10 +27,10 @@ class RecordElement(VobizXMLElement):
 
     @method.setter
     def method(self, value):
-        self.__method = six.text_type(value) if value is not None else None
+        self.__method = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_method(self, value):
         self.method = value
@@ -42,11 +42,11 @@ class RecordElement(VobizXMLElement):
 
     @file_format.setter
     def file_format(self, value):
-        self.__file_format = six.text_type(
+        self.__file_format = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_file_format(self, value):
         self.file_format = value
@@ -76,7 +76,7 @@ class RecordElement(VobizXMLElement):
         self.__timeout = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_timeout(self, value):
         self.timeout = value
@@ -91,7 +91,7 @@ class RecordElement(VobizXMLElement):
         self.__max_length = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_max_length(self, value):
         self.max_length = value
@@ -118,11 +118,11 @@ class RecordElement(VobizXMLElement):
 
     @finish_on_key.setter
     def finish_on_key(self, value):
-        self.__finish_on_key = six.text_type(
+        self.__finish_on_key = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_finish_on_key(self, value):
         self.finish_on_key = value
@@ -165,11 +165,11 @@ class RecordElement(VobizXMLElement):
 
     @transcription_type.setter
     def transcription_type(self, value):
-        self.__transcription_type = six.text_type(
+        self.__transcription_type = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_transcription_type(self, value):
         self.transcription_type = value
@@ -181,11 +181,11 @@ class RecordElement(VobizXMLElement):
 
     @transcription_url.setter
     def transcription_url(self, value):
-        self.__transcription_url = six.text_type(
+        self.__transcription_url = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_transcription_url(self, value):
         self.transcription_url = value
@@ -197,11 +197,11 @@ class RecordElement(VobizXMLElement):
 
     @transcription_method.setter
     def transcription_method(self, value):
-        self.__transcription_method = six.text_type(
+        self.__transcription_method = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_transcription_method(self, value):
         self.transcription_method = value
@@ -213,11 +213,11 @@ class RecordElement(VobizXMLElement):
 
     @transcription_report_type.setter
     def transcription_report_type(self, value):
-        self.__transcription_report_type = six.text_type(
+        self.__transcription_report_type = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_transcription_report_type(self, value):
         self.transcription_report_type = value
@@ -229,11 +229,11 @@ class RecordElement(VobizXMLElement):
 
     @callback_url.setter
     def callback_url(self, value):
-        self.__callback_url = six.text_type(
+        self.__callback_url = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_callback_url(self, value):
         self.callback_url = value
@@ -245,11 +245,11 @@ class RecordElement(VobizXMLElement):
 
     @callback_method.setter
     def callback_method(self, value):
-        self.__callback_method = six.text_type(
+        self.__callback_method = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_callback_method(self, value):
         self.callback_method = value
@@ -261,11 +261,11 @@ class RecordElement(VobizXMLElement):
 
     @record_channel_type.setter
     def record_channel_type(self, value):
-        self.__record_channel_type = six.text_type(
+        self.__record_channel_type = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_record_channel_type(self, value):
         self.record_channel_type = value
@@ -332,6 +332,6 @@ class RecordElement(VobizXMLElement):
             'recordChannelType': self.record_channel_type
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from vobiz.exceptions import ValidationError
 from tests import VobizXmlTestCase
 
@@ -16,9 +16,9 @@ class StreamElementTest(TestCase, VobizXmlTestCase):
         extraHeaders = "a=1,b=2"
         keepCallAlive = True
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.StreamElement(content, bidirectional=bidirectional, extraHeaders=extraHeaders, keepCallAlive=keepCallAlive)
+            vobizxml.StreamElement(content, bidirectional=bidirectional, extraHeaders=extraHeaders, keepCallAlive=keepCallAlive)
         ).to_string(False)
         self.assertXmlEqual(response, expected_response)
 
@@ -29,7 +29,7 @@ class StreamElementTest(TestCase, VobizXmlTestCase):
         content = 'wss://test.url'
         bidirectional = "hello"
         try:
-            plivoxml.StreamElement(content=content, bidirectional=bidirectional)
+            vobizxml.StreamElement(content=content, bidirectional=bidirectional)
         except ValidationError as e:
             print("Error: ", str(e))
             actual_error = str(e)

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -13,9 +13,9 @@ class WaitElementTest(TestCase, VobizXmlTestCase):
         min_silence = 1
         beep = True
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.WaitElement().set_length(length).set_silence(
+            vobizxml.WaitElement().set_length(length).set_silence(
                 silence
             ).set_min_silence(min_silence).set_beep(beep)
         ).to_string(False)

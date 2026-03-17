@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -11,9 +11,9 @@ class RedirectElementTest(TestCase, VobizXmlTestCase):
         method = "POST"
         content = 'This is Test'
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.RedirectElement(content).set_method(method)
+            vobizxml.RedirectElement(content).set_method(method)
         ).to_string(False)
 
         self.assertXmlEqual(response, expected_response)

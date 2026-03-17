@@ -1,5 +1,5 @@
 from unittest import TestCase
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -31,9 +31,9 @@ class GetDigitsElementTest(TestCase, VobizXmlTestCase):
         loop_play = 2
         content_play = 'This is test'
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.GetDigitsElement().set_action(action).set_method(method).
+            vobizxml.GetDigitsElement().set_action(action).set_method(method).
             set_redirect(redirect).set_timeout(timeout).set_play_beep(playBeep)
             .set_finish_on_key(finishOnKey).set_digit_timeout(digitTimeout).
             set_timeout(timeout).set_num_digits(numDigits).set_retries(retries)

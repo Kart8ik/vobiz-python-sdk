@@ -15,7 +15,7 @@ class WaitElement(VobizXMLElement):
         self.__length = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_length(self, value):
         self.length = value
@@ -45,7 +45,7 @@ class WaitElement(VobizXMLElement):
         self.__min_silence = int(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(*six.integer_types)],
+        value=[of_type(int)],
     )
     def set_min_silence(self, value):
         self.min_silence = value
@@ -88,6 +88,6 @@ class WaitElement(VobizXMLElement):
             'beep': self.beep,
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }

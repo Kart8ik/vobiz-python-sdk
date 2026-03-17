@@ -12,11 +12,11 @@ class PhonemeElement(VobizXMLElement):
 
     @alphabet.setter
     def alphabet(self, value):
-        self.__alphabet = six.text_type(
+        self.__alphabet = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_alphabet(self, value):
         self.alphabet = value
@@ -28,11 +28,11 @@ class PhonemeElement(VobizXMLElement):
 
     @ph.setter
     def ph(self, value):
-        self.__ph = six.text_type(
+        self.__ph = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_ph(self, value):
         self.ph = value
@@ -57,6 +57,6 @@ class PhonemeElement(VobizXMLElement):
         }
 
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }

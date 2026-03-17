@@ -1,5 +1,4 @@
 from typing import Any, Dict, Optional
-from vobiz.base import ListResponseObject
 
 
 class Calls:
@@ -52,7 +51,6 @@ class Calls:
             "GET",
             ("Call",),
             data=params,
-            response_type=ListResponseObject,
         )
 
     def get(self, call_uuid: str, status: Optional[str] = None):

@@ -1,7 +1,6 @@
 from vobiz import exceptions
 from vobiz.utils.validators import *
 from vobiz.xml import VobizXMLElement, map_type
-import six
 
 
 class StreamElement(VobizXMLElement):
@@ -119,6 +118,6 @@ class StreamElement(VobizXMLElement):
             'keepCallAlive': self.keepCallAlive
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }

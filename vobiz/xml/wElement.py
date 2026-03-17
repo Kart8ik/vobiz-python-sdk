@@ -28,11 +28,11 @@ class WElement(VobizXMLElement):
 
     @role.setter
     def role(self, value):
-        self.__role = six.text_type(
+        self.__role = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_role(self, value):
         self.role = value
@@ -53,7 +53,7 @@ class WElement(VobizXMLElement):
             'role': self.role,
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }
 

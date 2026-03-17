@@ -29,17 +29,19 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Communications :: Telephony',
     ],
     install_requires=[
         'requests >= 2, < 3',
-        'six >= 1, < 2',
         'decorator >= 5',
         'lxml >= 3',
         'PyJWT'
     ],
-    keywords=['plivo', 'plivo xml', 'voice calls', 'sms'],
+    keywords=['vobiz', 'vobiz xml', 'voice calls', 'sip trunking', 'telephony'],
     include_package_data=True,
     packages=find_packages(exclude=['tests', 'tests.*']), )

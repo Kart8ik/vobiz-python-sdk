@@ -1,5 +1,5 @@
 from unittest import TestCase
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -27,9 +27,9 @@ class RecordElementTest(TestCase, VobizXmlTestCase):
         callbackUrl = 'https://foo.example.com'
         callbackMethod = 'GET'
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.RecordElement().set_action(action).set_method(method)
+            vobizxml.RecordElement().set_action(action).set_method(method)
             .set_file_format(fileFormat).set_redirect(redirect).set_timeout(
                 timeout).set_max_length(maxLength).set_play_beep(playBeep)
             .set_finish_on_key(finishOnKey).set_record_session(recordSession).

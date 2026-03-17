@@ -36,6 +36,6 @@ class DTMFElement(VobizXMLElement):
             'async': self.async_,
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }

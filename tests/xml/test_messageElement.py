@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -17,9 +17,9 @@ class MessageElementTest(TestCase, VobizXmlTestCase):
         callbackMethod = 'GET'
         content = 'this is test'
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.MessageElement(content).set_src(src).set_dst(dst)
+            vobizxml.MessageElement(content).set_src(src).set_dst(dst)
             .set_type(type).set_callback_url(callbackUrl).set_callback_method(
                 callbackMethod)).to_string(False)
         self.assertXmlEqual(response, expected_response)

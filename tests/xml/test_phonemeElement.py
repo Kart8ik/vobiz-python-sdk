@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -11,10 +11,10 @@ class ElementTest(TestCase, VobizXmlTestCase):
         expected_response = '<Response><Speak><phoneme alphabet="ipa" ph="t&amp;#x259;mei&amp;' \
                             '#x325;&amp;#x27E;ou&amp;#x325;">Well</phoneme></Speak></Response>'
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.SpeakElement("").add(
-                plivoxml.PhonemeElement("Well").set_alphabet(alphabet).set_ph(ph)
+            vobizxml.SpeakElement("").add(
+                vobizxml.PhonemeElement("Well").set_alphabet(alphabet).set_ph(ph)
             )
         ).to_string(False)
         self.assertXmlEqual(response, expected_response)

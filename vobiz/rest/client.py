@@ -7,6 +7,9 @@ import os
 import platform
 from collections import namedtuple
 
+from dotenv import load_dotenv
+load_dotenv()
+
 from vobiz.base import ResponseObject
 from vobiz.exceptions import (
     AuthenticationError,

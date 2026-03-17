@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -14,10 +14,10 @@ class NumberElementTest(TestCase, VobizXmlTestCase):
         send_on_preanswer = True
         send_digits_mode = ""
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.DialElement().add(
-                plivoxml.NumberElement(content).set_send_digits(send_digits).set_send_on_preanswer(
+            vobizxml.DialElement().add(
+                vobizxml.NumberElement(content).set_send_digits(send_digits).set_send_on_preanswer(
                     send_on_preanswer
                 ).set_send_digits_mode(
                     send_digits_mode

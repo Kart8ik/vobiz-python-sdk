@@ -7,7 +7,7 @@ class CDRs:
     """
     Vobiz Call Detail Records (CDRs) resource.
 
-    All endpoints are scoped to the authenticated account.
+    Endpoint: https://api.vobiz.ai/api/v1/account/{account_id}/cdr
     """
 
     def __init__(self, client):
@@ -15,48 +15,32 @@ class CDRs:
 
     @property
     def _account_id(self) -> str:
-        # For Vobiz, we treat the RestClient auth_id as the account_id
         return self.client.auth_id
 
     def list(
         self,
         page: Optional[int] = None,
-        size: Optional[int] = None,
-        from_number: Optional[str] = None,
-        to_number: Optional[str] = None,
-        direction: Optional[str] = None,
+        per_page: Optional[int] = None,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
         **filters: Any,
     ):
         """
-        GET /api/v1/accounts/{account_id}/cdrs/
+        GET /api/v1/account/{account_id}/cdr
         """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/cdrs/"
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/cdr"
         params: Dict[str, Any] = {}
         if page is not None:
             params["page"] = page
-        if size is not None:
-            params["size"] = size
-        if from_number is not None:
-            params["from"] = from_number
-        if to_number is not None:
-            params["to"] = to_number
-        if direction is not None:
-            params["direction"] = direction
-        # allow arbitrary extra server-side filters
+        if per_page is not None:
+            params["per_page"] = per_page
+        if start_date is not None:
+            params["start_date"] = start_date
+        if end_date is not None:
+            params["end_date"] = end_date
         params.update(filters)
 
         resp = self.client.session.get(
             url, params=params, timeout=self.client.timeout, proxies=self.client.proxies
         )
         return self.client.process_response("GET", resp)
-
-    def get(self, cdr_id: str):
-        """
-        GET /api/v1/accounts/{account_id}/cdrs/{cdr_id}
-        """
-        url = f"{VOBIZ_API_V1}/accounts/{self._account_id}/cdrs/{cdr_id}"
-        resp = self.client.session.get(
-            url, timeout=self.client.timeout, proxies=self.client.proxies
-        )
-        return self.client.process_response("GET", resp)
-

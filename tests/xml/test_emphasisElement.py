@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -43,10 +43,10 @@ class EmphasisElementTest(TestCase, VobizXmlTestCase):
         content_w = "This is Test"
         role_w = "claws:VV0"
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.SpeakElement("").add(
-                plivoxml.EmphasisElement().set_level(level).add_break(
+            vobizxml.SpeakElement("").add(
+                vobizxml.EmphasisElement().set_level(level).add_break(
                     strength=strength_break
                 ).add_lang(
                     content_lang,

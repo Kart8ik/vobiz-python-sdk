@@ -12,11 +12,11 @@ class NumberElement(VobizXMLElement):
 
     @send_digits.setter
     def send_digits(self, value):
-        self.__send_digits = six.text_type(
+        self.__send_digits = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_send_digits(self, value):
         self.send_digits = value
@@ -43,10 +43,10 @@ class NumberElement(VobizXMLElement):
 
     @send_digits_mode.setter
     def send_digits_mode(self, value):
-        self.__send_digits_mode = six.text_type(value) if value is not None else None
+        self.__send_digits_mode = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_send_digits_mode(self, value):
         self.send_digits_mode = value
@@ -72,6 +72,6 @@ class NumberElement(VobizXMLElement):
             'sendDigitsMode': self.send_digits_mode,
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }

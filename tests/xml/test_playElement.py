@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -10,9 +10,9 @@ class PlayElementTest(TestCase, VobizXmlTestCase):
 
         loop = 1
         content = 'This is test'
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
 
         response = element.add(
-            plivoxml.PlayElement(content).set_loop(loop)
+            vobizxml.PlayElement(content).set_loop(loop)
         ).to_string(False)
         self.assertXmlEqual(response, expected_response)

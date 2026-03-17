@@ -12,11 +12,11 @@ class UserElement(VobizXMLElement):
 
     @send_digits.setter
     def send_digits(self, value):
-        self.__send_digits = six.text_type(
+        self.__send_digits = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_send_digits(self, value):
         self.send_digits = value
@@ -43,11 +43,11 @@ class UserElement(VobizXMLElement):
 
     @sip_headers.setter
     def sip_headers(self, value):
-        self.__sip_headers = six.text_type(
+        self.__sip_headers = str(
             value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_sip_headers(self, value):
         self.sip_headers = value
@@ -74,6 +74,6 @@ class UserElement(VobizXMLElement):
             'sipHeaders': self.sip_headers,
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }

@@ -5,7 +5,6 @@ import inspect
 import re
 
 import decorator
-import six
 
 from vobiz.exceptions import ValidationError
 
@@ -157,7 +156,6 @@ def of_type_exact(*args):
     return f
 
 
-
 def is_iterable(validator, sep=None):
     def f(name, value):
         try:
@@ -213,6 +211,7 @@ def validate_args(**to_validate):
 
     return outer
 
+
 def validate_list_items(instance_type):
     def f(arg_name, value):
         if not isinstance(value, list):
@@ -227,14 +226,13 @@ def validate_list_items(instance_type):
                     instance_type(**item)
                 except Exception as exception:
                     errors.append(str(exception))
-                    flag=1
-
+                    flag = 1
             else:
                 err = "Invalid item at index {} in {}: should be of type {}".format(idx, arg_name, instance_type.__name__)
                 if not isinstance(item, instance_type):
                     errors.append(err)
                     flag = 1
-                
+
             if not flag:
                 validated_items.append(item)
 
@@ -242,17 +240,18 @@ def validate_list_items(instance_type):
 
     return f
 
+
 def validate_dict_items(instance_type):
     def validator(arg_name, value):
         if not isinstance(value, dict):
             return None, ["{} must be a dictionary".format(arg_name)]
-        
+
         errors = []
         try:
             instance_type(**value)
         except TypeError as e:
             errors.append(str(e))
-        
+
         if errors:
             return None, errors
         return value, []
@@ -260,25 +259,22 @@ def validate_dict_items(instance_type):
     return validator
 
 
-is_valid_date = functools.partial(of_type, six.text_type)
-is_phonenumber = functools.partial(of_type, six.text_type)
-is_subaccount_id = functools.partial(all_of, of_type(six.text_type),
+# Type validator helpers — Python 3 only, no six dependency
+is_valid_date = functools.partial(of_type, str)
+is_phonenumber = functools.partial(of_type, str)
+is_subaccount_id = functools.partial(all_of, of_type(str),
                                      regex(r'^SA[A-Z0-9]{18}$'))
-is_mainaccount_id = functools.partial(all_of, of_type(six.text_type),
+is_mainaccount_id = functools.partial(all_of, of_type(str),
                                       regex(r'^MA[A-Z0-9]{18}$'))
-is_account_id = functools.partial(all_of, of_type(six.text_type),
+is_account_id = functools.partial(all_of, of_type(str),
                                       regex(r'^(M|S)A[A-Z0-9]{18}$'))
 is_subaccount = functools.partial(
-    one_of, of_type_exact('plivo.resources.accounts.Subaccount'),
+    one_of, of_type_exact('vobiz.resources.accounts.Subaccount'),
     is_subaccount_id())
 is_url = functools.partial(
-    all_of, of_type(six.text_type),
+    all_of, of_type(str),
     regex(
         r'(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+|None)'
     ))
 is_proper_date_format = functools.partial(all_of, of_type_exact(str),
                                           regex(r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2}(\.\d{1,6})?)?$'))
-
-is_template = functools.partial(of_type_exact,'plivo.utils.template.Template')
-is_interactive = functools.partial(of_type_exact,'plivo.utils.interactive.Interactive')
-is_location = functools.partial(of_type_exact,'plivo.utils.location.Location')

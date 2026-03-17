@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -49,10 +49,10 @@ class ProsodyElementTest(TestCase, VobizXmlTestCase):
         content_w = "This is Test"
         role_w = "claws:VV0"
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.SpeakElement("").add(
-                plivoxml.ProsodyElement().set_volume(volume_prosody).set_rate(
+            vobizxml.SpeakElement("").add(
+                vobizxml.ProsodyElement().set_volume(volume_prosody).set_rate(
                     rate_prosody
                 ).set_pitch(
                     pitch_prosody

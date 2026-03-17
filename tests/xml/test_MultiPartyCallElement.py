@@ -1,5 +1,5 @@
 from unittest import TestCase
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from vobiz.exceptions import ValidationError
 from tests import VobizXmlTestCase
 
@@ -21,7 +21,7 @@ class MultiPartyCallElementTest(TestCase, VobizXmlTestCase):
                             'stopRecordingAudioMethod="GET" ' \
                             'waitMusicMethod="GET" transcript="false">Nairobi</MultiPartyCall>'
 
-        element = plivoxml.MultiPartyCallElement(content='Nairobi', role='Agent')
+        element = vobizxml.MultiPartyCallElement(content='Nairobi', role='Agent')
         self.assertXmlEqual(element.to_string(False), expected_response)
 
     def test_setting_optional_fields(self):
@@ -38,7 +38,7 @@ class MultiPartyCallElementTest(TestCase, VobizXmlTestCase):
                             'stopRecordingAudioMethod="GET" ' \
                             'waitMusicMethod="GET" transcript="false">Tokyo</MultiPartyCall>'
 
-        element = plivoxml.MultiPartyCallElement(content='Tokyo', role='supervisor', exit_sound='beep:1')
+        element = vobizxml.MultiPartyCallElement(content='Tokyo', role='supervisor', exit_sound='beep:1')
         self.assertXmlEqual(element.to_string(False), expected_response)
 
     def test_validation_on_init(self):
@@ -49,7 +49,7 @@ class MultiPartyCallElementTest(TestCase, VobizXmlTestCase):
 
         actual_error = ''
         try:
-            plivoxml.MultiPartyCallElement(content='Rio', role='agent', status_callback_events='hostages-move')
+            vobizxml.MultiPartyCallElement(content='Rio', role='agent', status_callback_events='hostages-move')
         except ValidationError as e:
             actual_error = str(e)
         self.assertXmlEqual(expected_error, actual_error)
@@ -57,7 +57,7 @@ class MultiPartyCallElementTest(TestCase, VobizXmlTestCase):
     def test_validation_on_set(self):
         expected_error = "['300 <= max_duration <= 28800 (actual value: 255)']"
 
-        element = plivoxml.MultiPartyCallElement(content='Denver', role='Customer')
+        element = vobizxml.MultiPartyCallElement(content='Denver', role='Customer')
         actual_error = ''
         try:
             element.set_max_duration(255)
@@ -68,26 +68,26 @@ class MultiPartyCallElementTest(TestCase, VobizXmlTestCase):
     def test_builder_setting(self):
 
         expected_xml = '<MultiPartyCall agentHoldMusicMethod="GET" coachMode="false" customerHoldMusicMethod="GET" ' \
-                       'customerHoldMusicUrl="http://plivo.com/voice.mp3" endMpcOnExit="true" enterSound="beep:1" ' \
+                       'customerHoldMusicUrl="https://vobiz.ai/voice.mp3" endMpcOnExit="true" enterSound="beep:1" ' \
                        'enterSoundMethod="GET" exitSound="beep:2" exitSoundMethod="GET" hold="false" ' \
                        'maxDuration="4500" maxParticipants="9" mute="false" onExitActionMethod="GET" ' \
-                       'onExitActionUrl="http://plivo.com/api.mp3" record="false" recordParticipantTrack="false" ' \
+                       'onExitActionUrl="https://vobiz.ai/api.mp3" record="false" recordParticipantTrack="false" ' \
                        'recordFileFormat="mp3" recordingCallbackMethod="POST" relayDTMFInputs="false" ' \
-                       'role="customer" startMpcOnEnter="true" startRecordingAudio="http://plivo.com/api.mp3" ' \
+                       'role="customer" startMpcOnEnter="true" startRecordingAudio="https://vobiz.ai/api.mp3" ' \
                        'startRecordingAudioMethod="GET" ' \
                        'statusCallbackEvents="mpc-state-changes,participant-state-changes" ' \
-                       'statusCallbackMethod="POST" stayAlone="false" stopRecordingAudio="http://plivo.com/api.mp3" ' \
+                       'statusCallbackMethod="POST" stayAlone="false" stopRecordingAudio="https://vobiz.ai/api.mp3" ' \
                        'stopRecordingAudioMethod="GET" ' \
                        'waitTime="5" ' \
-                       'waitMusicMethod="GET" recordMinMemberCount="1" transcript="true" transcriptionUrl="http://plivo.com/api.mp3" >Helsinki</MultiPartyCall> '
-        element = plivoxml.MultiPartyCallElement(content='Helsinki', role='customer'). \
+                       'waitMusicMethod="GET" recordMinMemberCount="1" transcript="true" transcriptionUrl="https://vobiz.ai/api.mp3" >Helsinki</MultiPartyCall> '
+        element = vobizxml.MultiPartyCallElement(content='Helsinki', role='customer'). \
             set_max_duration(4500).set_max_participants(9).set_end_mpc_on_exit(True). \
-            set_customer_hold_music_url('http://plivo.com/voice.mp3').set_coach_mode(False). \
-            set_on_exit_action_url('http://plivo.com/api.mp3').set_on_exit_action_method('GET'). \
-            set_stop_recording_audio("http://plivo.com/api.mp3"). \
-            set_start_recording_audio("http://plivo.com/api.mp3"). \
+            set_customer_hold_music_url('https://vobiz.ai/voice.mp3').set_coach_mode(False). \
+            set_on_exit_action_url('https://vobiz.ai/api.mp3').set_on_exit_action_method('GET'). \
+            set_stop_recording_audio("https://vobiz.ai/api.mp3"). \
+            set_start_recording_audio("https://vobiz.ai/api.mp3"). \
             set_wait_time(5). \
             set_transcript(True). \
-            set_transcription_url("http://plivo.com/api.mp3")
+            set_transcription_url("https://vobiz.ai/api.mp3")
 
         self.assertXmlEqual(expected_xml, element.to_string(False))

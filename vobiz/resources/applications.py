@@ -91,14 +91,14 @@ class Applications:
 
     def update(self, application_id: str, **params: Any):
         """
-        PUT /api/v1/Account/{account_id}/Application/{application_id}
+        POST /api/v1/Account/{account_id}/Application/{application_id}/
         """
-        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/Application/{application_id}"
+        url = f"{VOBIZ_API_V1}/Account/{self._account_id}/Application/{application_id}/"
         body: Dict[str, Any] = dict(params)
-        resp = self.client.session.put(
+        resp = self.client.session.post(
             url, json=body, timeout=self.client.timeout, proxies=self.client.proxies
         )
-        return self.client.process_response("PUT", resp)
+        return self.client.process_response("POST", resp)
 
     def delete(self, application_id: str):
         """

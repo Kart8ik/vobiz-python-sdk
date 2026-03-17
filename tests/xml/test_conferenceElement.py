@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vobiz import vobizxml as plivoxml
+from vobiz import vobizxml
 from tests import VobizXmlTestCase
 
 
@@ -41,9 +41,9 @@ class ConferenceElementTest(TestCase, VobizXmlTestCase):
         transcription_url = "http://www.foo.com/waitmusic/"
         transcription_method = "POST"
 
-        element = plivoxml.ResponseElement()
+        element = vobizxml.ResponseElement()
         response = element.add(
-            plivoxml.ConferenceElement().set_muted(
+            vobizxml.ConferenceElement().set_muted(
                 muted
             ).set_enter_sound(
                 enter_sound

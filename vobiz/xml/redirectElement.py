@@ -1,4 +1,3 @@
-import six
 
 from vobiz.utils.validators import *
 from vobiz.xml import VobizXMLElement, map_type
@@ -14,10 +13,10 @@ class RedirectElement(VobizXMLElement):
 
     @method.setter
     def method(self, value):
-        self.__method = six.text_type(value) if value is not None else None
+        self.__method = str(value) if value is not None else None
 
     @validate_args(
-        value=[of_type(six.text_type)],
+        value=[of_type(str)],
     )
     def set_method(self, value):
         self.method = value
@@ -38,6 +37,6 @@ class RedirectElement(VobizXMLElement):
             'method': self.method,
         }
         return {
-            k: six.text_type(map_type(v))
+            k: str(map_type(v))
             for k, v in d.items() if v is not None
         }
