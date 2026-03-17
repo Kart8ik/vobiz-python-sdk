@@ -9,7 +9,10 @@ Run:
 
 import os
 import sys
-import traceback
+import time
+import json
+import threading
+import subprocess
 
 from dotenv import load_dotenv
 
@@ -56,6 +59,75 @@ def skip(label, reason):
     results.append((label, "SKIP", reason))
 
 
+# ── answer server ──────────────────────────────────────────────────────────────
+
+def start_answer_server(port=5001):
+    """Start a minimal Flask answer server in a background thread."""
+    try:
+        from flask import Flask, Response
+        app = Flask(__name__)
+
+        @app.route("/answer", methods=["GET", "POST"])
+        def answer():
+            xml = (
+                "<Response>"
+                "<Speak voice='WOMAN' language='en-US'>"
+                "SDK test call. Please wait."
+                "</Speak>"
+                "<Wait length='30'/>"
+                "</Response>"
+            )
+            return Response(xml, status=200, mimetype="application/xml")
+
+        t = threading.Thread(
+            target=lambda: app.run(port=port, use_reloader=False, debug=False),
+            daemon=True,
+        )
+        t.start()
+        time.sleep(1)  # give Flask a moment to bind
+        return True
+    except Exception as e:
+        print(f"  [WARN] Could not start answer server: {e}")
+        return False
+
+
+def get_ngrok_url(port=5001, timeout=12):
+    """
+    Start ngrok tunnel on port and return the public HTTPS URL.
+    Polls the ngrok local API until tunnel is ready.
+    """
+    import requests as req
+
+    # Kill any existing ngrok on this port first
+    subprocess.Popen(
+        ["pkill", "-f", f"ngrok http {port}"],
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+    )
+    time.sleep(1)
+
+    proc = subprocess.Popen(
+        ["ngrok", "http", str(port), "--log=stdout"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        try:
+            r = req.get("http://localhost:4040/api/tunnels", timeout=2)
+            tunnels = r.json().get("tunnels", [])
+            for t in tunnels:
+                url = t.get("public_url", "")
+                if url.startswith("https://"):
+                    return url, proc
+        except Exception:
+            pass
+        time.sleep(1)
+
+    proc.terminate()
+    return None, proc
+
+
 # ── main ───────────────────────────────────────────────────────────────────────
 
 def main():
@@ -63,8 +135,13 @@ def main():
     print("  Vobiz SDK — End-to-End Test")
     print(f"{'═'*60}")
 
-    auth_id    = os.environ.get("VOBIZ_AUTH_ID")
-    auth_token = os.environ.get("VOBIZ_AUTH_TOKEN")
+    auth_id     = os.environ.get("VOBIZ_AUTH_ID")
+    auth_token  = os.environ.get("VOBIZ_AUTH_TOKEN")
+    from_number = os.environ.get("FROM_PHONE_NUMBER")
+    to_number   = os.environ.get("TO_PHONE_NUMBER")
+
+    # Number that is NOT assigned to any trunk — safe for attach/detach test
+    ATTACH_TEST_NUMBER = "+919240024248"
 
     if not auth_id or not auth_token:
         print("\n  ERROR: VOBIZ_AUTH_ID / VOBIZ_AUTH_TOKEN not set in .env")
@@ -77,15 +154,107 @@ def main():
 
     # ── 1. Account ──────────────────────────────────────────────────────────────
     section("1. Account")
-    run("GET  /auth/me",              lambda: client.accounts.get())
-    run("GET  get_balance(INR)",      lambda: client.accounts.get_balance(auth_id, "INR"))
-    run("GET  get_transactions()",    lambda: client.accounts.get_transactions(auth_id, limit=5, offset=0))
-    run("GET  get_concurrency()",     lambda: client.accounts.get_concurrency(auth_id))
+    run("GET  /auth/me",           lambda: client.accounts.get())
+    run("GET  get_balance(INR)",   lambda: client.accounts.get_balance(auth_id, "INR"))
+    run("GET  get_transactions()", lambda: client.accounts.get_transactions(auth_id, limit=5, offset=0))
+    run("GET  get_concurrency()",  lambda: client.accounts.get_concurrency(auth_id))
 
-    # ── 2. Calls ────────────────────────────────────────────────────────────────
-    section("2. Calls")
-    run("GET  list_live()",     lambda: client.calls.list_live())
-    run("GET  list_queued()",   lambda: client.calls.list_queued())
+    # ── 2. Calls — list ─────────────────────────────────────────────────────────
+    section("2. Calls — list live / queued")
+    run("GET  list_live()",   lambda: client.calls.list_live())
+    run("GET  list_queued()", lambda: client.calls.list_queued())
+
+    # ── 2b. Calls — live call: record / play / speak ────────────────────────────
+    section("2b. Calls — Live Call (record / play / speak)")
+
+    ngrok_proc = None
+    answer_url = None
+
+    if from_number and to_number:
+        print("  Starting local answer server on port 5001...")
+        server_ok = start_answer_server(port=5001)
+
+        if server_ok:
+            print("  Starting ngrok tunnel...")
+            ngrok_url, ngrok_proc = get_ngrok_url(port=5001, timeout=15)
+            if ngrok_url:
+                answer_url = f"{ngrok_url}/answer"
+                print(f"  Answer URL: {answer_url}")
+            else:
+                print("  [WARN] ngrok tunnel did not start in time — skipping live call tests")
+
+    if answer_url:
+        call_result = run("POST create call",
+            lambda: client.calls.create(
+                from_=from_number,
+                to_=to_number,
+                answer_url=answer_url,
+                answer_method="GET",
+            )
+        )
+
+        call_uuid = None
+        if call_result is not None:
+            call_uuid = (
+                getattr(call_result, "request_uuid", None)
+                or getattr(call_result, "call_uuid", None)
+                or getattr(call_result, "uuid", None)
+            )
+
+        if call_uuid:
+            print(f"\n         Call UUID: {call_uuid}")
+            print("         Waiting 10s for call to connect...")
+            time.sleep(10)
+
+            run("POST start_recording",
+                lambda: client.calls.start_recording(
+                    call_uuid, time_limit=30, file_format="mp3"
+                )
+            )
+
+            run("POST play_audio",
+                lambda: client.calls.play_audio(
+                    call_uuid,
+                    urls=["https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"],
+                    length=5,
+                    legs="aleg",
+                    loop=False,
+                )
+            )
+            time.sleep(3)
+
+            run("DEL  stop_audio",
+                lambda: client.calls.stop_audio(call_uuid))
+
+            run("POST speak_text",
+                lambda: client.calls.speak_text(
+                    call_uuid,
+                    text="This is a live SDK test. All systems are working correctly.",
+                    voice="WOMAN",
+                    language="en-US",
+                    legs="aleg",
+                )
+            )
+            time.sleep(4)
+
+            run("DEL  stop_speak",
+                lambda: client.calls.stop_speak(call_uuid))
+
+            run("DEL  stop_recording",
+                lambda: client.calls.stop_recording(call_uuid))
+
+            run("DEL  hangup call",
+                lambda: client.calls.hangup(call_uuid))
+        else:
+            skip("start_recording / play_audio / speak_text / stop_* / hangup",
+                 "call creation did not return a UUID")
+    else:
+        skip("Live call tests (record / play / speak)",
+             "FROM/TO numbers not set or ngrok failed to start")
+
+    # Clean up ngrok
+    if ngrok_proc:
+        ngrok_proc.terminate()
 
     # ── 3. Applications ─────────────────────────────────────────────────────────
     section("3. Applications")
@@ -107,15 +276,44 @@ def main():
     if app_id:
         run(f"GET  get application {app_id}",
             lambda: client.applications.get(app_id))
-        run(f"PUT  update application {app_id}",
+        run(f"POST update application {app_id}",
             lambda: client.applications.update(app_id, name="SDK-Test-App-Updated"))
         run(f"DEL  delete application {app_id}",
             lambda: client.applications.delete(app_id))
     else:
-        skip("GET/PUT/DEL application by id", "create did not return app_id")
+        skip("GET/POST/DEL application by id", "create did not return app_id")
 
-    # ── 4. Phone Numbers (inventory) ────────────────────────────────────────────
+    # ── 3b. Applications — attach / detach number ───────────────────────────────
+    section("3b. Applications — Link Numbers")
+
+    link_app_result = run("POST create app for link test",
+        lambda: client.applications.create(
+            name="SDK-Link-Test-App",
+            answer_url="https://example.com/answer",
+            application_type="XML",
+        )
+    )
+    link_app_id = None
+    if link_app_result is not None:
+        link_app_id = (
+            getattr(link_app_result, "app_id", None)
+            or getattr(link_app_result, "id", None)
+        )
+
+    if link_app_id:
+        run(f"POST attach_number {ATTACH_TEST_NUMBER} → app",
+            lambda: client.applications.attach_number(ATTACH_TEST_NUMBER, link_app_id))
+        run(f"DEL  detach_number {ATTACH_TEST_NUMBER}",
+            lambda: client.applications.detach_number(ATTACH_TEST_NUMBER))
+        run(f"DEL  delete link test app {link_app_id}",
+            lambda: client.applications.delete(link_app_id))
+    else:
+        skip("attach_number / detach_number", "app creation failed")
+
+    # ── 4. Phone Numbers ────────────────────────────────────────────────────────
     section("4. Phone Numbers")
+    run("GET  list owned numbers",
+        lambda: client.phone_numbers.list(page=1, per_page=10))
     run("GET  list_inventory(IN)",
         lambda: client.phone_numbers.list_inventory(country="IN", page=1, per_page=10))
 
@@ -131,8 +329,10 @@ def main():
 
     ep_id = None
     if ep_result is not None:
-        ep_id = (getattr(ep_result, "endpoint_id", None)
-                 or getattr(ep_result, "id", None))
+        ep_id = (
+            getattr(ep_result, "endpoint_id", None)
+            or getattr(ep_result, "id", None)
+        )
 
     run("GET  list endpoints", lambda: client.endpoints.list())
 
@@ -156,7 +356,10 @@ def main():
             list(trunks_result) if hasattr(trunks_result, "__iter__") else []
         )
         if objs:
-            trunk_id = getattr(objs[0], "id", None) or getattr(objs[0], "trunk_id", None)
+            trunk_id = (
+                getattr(objs[0], "id", None)
+                or getattr(objs[0], "trunk_id", None)
+            )
 
     if trunk_id:
         run(f"GET  get trunk {trunk_id}",
@@ -179,12 +382,14 @@ def main():
 
     acl_id = None
     if acl_result is not None:
-        acl_id = getattr(acl_result, "id", None) or getattr(acl_result, "acl_id", None)
+        acl_id = (
+            getattr(acl_result, "id", None)
+            or getattr(acl_result, "acl_id", None)
+        )
 
     run("GET  list ip-acls", lambda: client.ip_access_control_lists.list())
 
     if acl_id:
-        # Note: single-item GET not supported by Vobiz API for ip-acl
         run(f"DEL  delete acl {acl_id}",
             lambda: client.ip_access_control_lists.delete(acl_id))
     else:
@@ -192,12 +397,23 @@ def main():
 
     # ── 9. Origination URIs ─────────────────────────────────────────────────────
     section("9. Origination URIs")
-    run("GET  list origination_uris",
-        lambda: client.origination_uris.list())
+    run("GET  list origination_uris", lambda: client.origination_uris.list())
 
     # ── 10. Recordings ──────────────────────────────────────────────────────────
     section("10. Recordings")
     run("GET  list recordings", lambda: client.recordings.list())
+
+    # export() uses JWT auth (access token), not API key — not testable here
+    skip("POST export recordings",
+         "requires JWT access token (different auth scheme) — not API key auth")
+
+    # bulk_delete with a far-future date so nothing is actually deleted
+    run("DEL  bulk_delete recordings (safe future date — no-op)",
+        lambda: client.recordings.bulk_delete(
+            **{"add_time__gte": "2099-01-01 00:00:00",
+               "add_time__lte": "2099-01-31 23:59:59"}
+        )
+    )
 
     # ── 11. CDRs ────────────────────────────────────────────────────────────────
     section("11. CDRs")
@@ -208,8 +424,8 @@ def main():
     print("  Summary")
     print(f"{'═'*60}")
 
-    passed = sum(1 for _, s, _ in results if s == "PASS")
-    failed = sum(1 for _, s, _ in results if s == "FAIL")
+    passed  = sum(1 for _, s, _ in results if s == "PASS")
+    failed  = sum(1 for _, s, _ in results if s == "FAIL")
     skipped = sum(1 for _, s, _ in results if s == "SKIP")
 
     print(f"\n  Total : {len(results)}")
