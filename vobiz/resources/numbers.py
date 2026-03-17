@@ -19,8 +19,35 @@ class PhoneNumbers:
         # For Vobiz, we treat the RestClient auth_id as the account_id
         return self.client.auth_id
 
-    def list_inventory(
+    def list(
         self,
+        page: Optional[int] = None,
+        per_page: Optional[int] = None,
+        include_subaccounts: Optional[bool] = None,
+        **filters: Any,
+    ):
+        """
+        GET /api/v1/account/{auth_id}/numbers
+
+        List all phone numbers purchased and assigned to this account.
+        include_subaccounts: if True, also returns numbers from sub-accounts (master accounts only).
+        """
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/numbers"
+        params: Dict[str, Any] = {}
+        if page is not None:
+            params["page"] = page
+        if per_page is not None:
+            params["per_page"] = per_page
+        if include_subaccounts is not None:
+            params["include_subaccounts"] = include_subaccounts
+        params.update(filters)
+
+        resp = self.client.session.get(
+            url, params=params, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("GET", resp)
+
+    def list_inventory(        self,
         country: Optional[str] = None,
         page: Optional[int] = None,
         per_page: Optional[int] = None,

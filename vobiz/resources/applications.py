@@ -109,3 +109,30 @@ class Applications:
             url, timeout=self.client.timeout, proxies=self.client.proxies
         )
         return self.client.process_response("DELETE", resp)
+
+    def attach_number(self, number: str, application_id: str):
+        """
+        POST /api/v1/account/{account_id}/numbers/{number}/application
+
+        Attach a phone number to a voice application.
+        number: E.164 format, e.g. "+911234567890"
+        """
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/numbers/{number}/application"
+        body = {"application_id": application_id}
+        resp = self.client.session.post(
+            url, json=body, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("POST", resp)
+
+    def detach_number(self, number: str):
+        """
+        DELETE /api/v1/account/{account_id}/numbers/{number}/application
+
+        Detach a phone number from its voice application.
+        number: E.164 format, e.g. "+911234567890"
+        """
+        url = f"{VOBIZ_API_V1}/account/{self._account_id}/numbers/{number}/application"
+        resp = self.client.session.delete(
+            url, timeout=self.client.timeout, proxies=self.client.proxies
+        )
+        return self.client.process_response("DELETE", resp)
