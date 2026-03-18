@@ -15,10 +15,11 @@ from .breakElement import BreakElement
 from .langElement import LangElement
 from .emphasisElement import EmphasisElement
 from .speakElement import SpeakElement
-from .getDigitsElement import GetDigitsElement
-from .getInputElement import GetInputElement
+from .gatherElement import GatherElement
 from .preAnswerElement import PreAnswerElement
 from .DialElement import DialElement
+from .streamElement import StreamElement
+from .AudioStreamElement import AudioStreamElement
 from .ResponseElement import ResponseElement
 from .pElement import PElement
 from .phonemeElement import PhonemeElement
@@ -28,4 +29,3 @@ from .sayAsElement import SayAsElement
 from .subElement import SubElement
 from .wElement import WElement
 from .contElement import ContElement
-from .streamElement import StreamElement

@@ -1,4 +1,5 @@
 from vobiz.utils.validators import *
+from vobiz.exceptions import VobizXMLError
 from vobiz.xml import (
     VobizXMLElement,
     map_type,
@@ -135,17 +136,17 @@ class DialElement(VobizXMLElement):
 
     @property
     def confirm_timeout(self):
-        return self.confirm_timeout
+        return self.__confirm_timeout
 
     @confirm_timeout.setter
     def confirm_timeout(self, value):
-        self.confirm_timeout = str(
+        self.__confirm_timeout = str(
             value) if value is not None else None
 
     @validate_args(
         value=[of_type(str)],
     )
-    def confirm_timeout(self, value):
+    def set_confirm_timeout(self, value):
         self.confirm_timeout = value
         return self
 
@@ -316,6 +317,9 @@ class DialElement(VobizXMLElement):
         self.sip_headers = sip_headers
 
     def to_dict(self):
+        if len(self.children) == 0:
+            raise VobizXMLError('Dial requires at least one nested Number or User element.')
+
         d = {
             'action': self.action,
             'method': self.method,

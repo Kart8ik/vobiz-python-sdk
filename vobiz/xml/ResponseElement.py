@@ -1,8 +1,9 @@
 from vobiz.xml import (ConferenceElement, DialElement, DTMFElement,
-                       GetDigitsElement, GetInputElement, HangupElement,
+                       GatherElement, HangupElement,
                        MessageElement, PlayElement, VobizXMLElement,
                        PreAnswerElement, RecordElement, RedirectElement,
-                       SpeakElement, WaitElement, MultiPartyCallElement
+                       SpeakElement, WaitElement, MultiPartyCallElement,
+                       StreamElement, AudioStreamElement
                        )
 
 
@@ -12,8 +13,8 @@ class ResponseElement(VobizXMLElement):
         'Conference',
         'Dial',
         'DTMF',
-        'GetDigits',
-        'GetInput',
+        'AudioStream',
+        'Gather',
         'Hangup',
         'Message',
         'Play',
@@ -86,6 +87,7 @@ class ResponseElement(VobizXMLElement):
             caller_id=None,
             caller_name=None,
             confirm_sound=None,
+            confirm_timeout=None,
             confirm_key=None,
             dial_music=None,
             callback_url=None,
@@ -105,6 +107,7 @@ class ResponseElement(VobizXMLElement):
                 caller_id=caller_id,
                 caller_name=caller_name,
                 confirm_sound=confirm_sound,
+                confirm_timeout=confirm_timeout,
                 confirm_key=confirm_key,
                 dial_music=dial_music,
                 callback_url=callback_url,
@@ -127,41 +130,9 @@ class ResponseElement(VobizXMLElement):
         ))
         return self
 
-    def add_get_digits(
+    def add_gather(
             self,
-            action=None,
-            method=None,
-            timeout=None,
-            digit_timeout=None,
-            finish_on_key=None,
-            num_digits=None,
-            retries=None,
-            redirect=None,
-            play_beep=None,
-            valid_digits=None,
-            invalid_digits_sound=None,
-            log=None,
-    ):
-        self.add(
-            GetDigitsElement(
-                action=action,
-                method=method,
-                timeout=timeout,
-                digit_timeout=digit_timeout,
-                finish_on_key=finish_on_key,
-                num_digits=num_digits,
-                retries=retries,
-                redirect=redirect,
-                play_beep=play_beep,
-                valid_digits=valid_digits,
-                invalid_digits_sound=invalid_digits_sound,
-                log=log,
-            ))
-        return self
-
-    def add_get_input(
-            self,
-            action=None,
+            action,
             method=None,
             input_type=None,
             execution_timeout=None,
@@ -179,7 +150,7 @@ class ResponseElement(VobizXMLElement):
             profanity_filter=None,
     ):
         self.add(
-            GetInputElement(
+            GatherElement(
                 action=action,
                 method=method,
                 input_type=input_type,
@@ -247,7 +218,7 @@ class ResponseElement(VobizXMLElement):
 
     def add_record(
             self,
-            action=None,
+            action,
             method=None,
             file_format=None,
             redirect=None,
@@ -325,6 +296,58 @@ class ResponseElement(VobizXMLElement):
                 silence=silence,
                 min_silence=min_silence,
                 beep=beep,
+            ))
+        return self
+
+    def add_stream(
+            self,
+            content,
+            bidirectional=None,
+            audioTrack=None,
+            streamTimeout=None,
+            statusCallbackUrl=None,
+            statusCallbackMethod=None,
+            contentType=None,
+            extraHeaders=None,
+            keepCallAlive=None,
+    ):
+        self.add(
+            StreamElement(
+                content=content,
+                bidirectional=bidirectional,
+                audioTrack=audioTrack,
+                streamTimeout=streamTimeout,
+                statusCallbackUrl=statusCallbackUrl,
+                statusCallbackMethod=statusCallbackMethod,
+                contentType=contentType,
+                extraHeaders=extraHeaders,
+                keepCallAlive=keepCallAlive,
+            ))
+        return self
+
+    def add_audio_stream(
+            self,
+            content,
+            bidirectional=None,
+            audioTrack=None,
+            streamTimeout=None,
+            statusCallbackUrl=None,
+            statusCallbackMethod=None,
+            contentType=None,
+            extraHeaders=None,
+            keepCallAlive=None,
+    ):
+        self.add(
+            AudioStreamElement(
+                content=content,
+                bidirectional=bidirectional,
+                audioTrack=audioTrack,
+                streamTimeout=streamTimeout,
+                statusCallbackUrl=statusCallbackUrl,
+                statusCallbackMethod=statusCallbackMethod,
+                contentType=contentType,
+                extraHeaders=extraHeaders,
+                keepCallAlive=keepCallAlive,
             ))
         return self
 

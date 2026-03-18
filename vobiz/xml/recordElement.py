@@ -1,4 +1,5 @@
 from vobiz.utils.validators import *
+from vobiz import exceptions
 from vobiz.xml import VobizXMLElement, map_type
 
 
@@ -12,7 +13,9 @@ class RecordElement(VobizXMLElement):
 
     @action.setter
     def action(self, value):
-        self.__action = str(value) if value is not None else None
+        if value is None or str(value).strip() == '':
+            raise exceptions.ValidationError('action is required for Record')
+        self.__action = str(value)
 
     @validate_args(
         value=[of_type(str)],
@@ -273,7 +276,7 @@ class RecordElement(VobizXMLElement):
 
     def __init__(
             self,
-            action=None,
+            action,
             method=None,
             file_format=None,
             redirect=None,

@@ -500,6 +500,28 @@ get_digits = response.add_get_digits(
 )
 get_digits.add_speak("Press 1 for sales. Press 2 for support.")
 
+# Collect speech + DTMF with Gather (official spec)
+gather = response.add_gather(
+    action="https://your-server.com/gather-result",
+    method="POST",
+    input_type="dtmf speech",
+    execution_timeout=15,
+    digit_end_timeout="auto",
+    speech_end_timeout="auto",
+    finish_on_key="#",
+    num_digits=4,
+    speech_model="default",
+    hints="sales,support,billing",
+    language="en-US",
+    interim_speech_results_callback="https://your-server.com/gather-interim",
+    interim_speech_results_callback_method="POST",
+    log=True,
+    redirect=True,
+    profanity_filter=False,
+)
+gather.add_speak("Press 1 or say Sales. Press 2 or say Support.")
+gather.add_play("https://your-server.com/audio/menu.mp3")
+
 # Record the call
 response.add_record(
     action="https://your-server.com/recording",

@@ -3,6 +3,7 @@
 from unittest import TestCase
 
 from vobiz import vobizxml
+from vobiz.exceptions import VobizXMLError
 from tests import VobizXmlTestCase
 
 
@@ -20,28 +21,42 @@ class ResponseElementTest(TestCase, VobizXmlTestCase):
 
     def test_add_dial(self):
         time = 2
-        elem = vobizxml.ResponseElement().add_dial(time_limit=time).to_string(False)
-        self.assertXmlEqual(elem,
-                            '<Response><Dial timeLimit="2"/></Response>')
+        response = vobizxml.ResponseElement().add_dial(time_limit=time)
+        self.assertIsInstance(response, vobizxml.ResponseElement)
+        response = vobizxml.ResponseElement().add(
+            vobizxml.DialElement(time_limit=time).add_number('+12025550123')
+        )
+        self.assertXmlEqual(
+            response.to_string(False),
+            '<Response><Dial timeLimit="2"><Number>+12025550123</Number></Dial></Response>'
+        )
 
     def test_add_dtmf(self):
         content = 'dummy'
         elem = vobizxml.ResponseElement().add_dtmf(content=content).to_string(False)
-        self.assertXmlEqual(elem, '<Response><DTMF>dummy</DTMF></Response>')
+        self.assertXmlEqual(elem,
+                            '<Response><DTMF>dummy</DTMF></Response>')
 
-    def test_add_get_digits(self):
-        content = 2
-        elem = vobizxml.ResponseElement().add_get_digits(
-            timeout=content).to_string(False)
+    def test_add_gather(self):
+        elem = vobizxml.ResponseElement().add_gather(
+            action='https://foo.example.com/gather',
+            execution_timeout=15,
+            input_type='speech'
+        ).to_string(False)
         self.assertXmlEqual(
-            elem, '<Response><GetDigits timeout="2"/></Response>')
+            elem,
+            '<Response><Gather action="https://foo.example.com/gather" executionTimeout="15" inputType="speech"/></Response>'
+        )
 
-    def test_add_get_input(self):
-        content = 2
-        elem = vobizxml.ResponseElement().add_get_input(
-            execution_timeout=content).to_string(False)
+    def test_add_audio_stream(self):
+        elem = vobizxml.ResponseElement().add_audio_stream(
+            content='wss://stream.example.com/ws',
+            bidirectional=True,
+        ).to_string(False)
         self.assertXmlEqual(
-            elem, '<Response><GetInput executionTimeout="2"/></Response>')
+            elem,
+            '<Response><AudioStream bidirectional="true">wss://stream.example.com/ws</AudioStream></Response>'
+        )
 
     def test_add_hangup(self):
         content = 'dummy'
@@ -103,6 +118,12 @@ class ResponseElementTest(TestCase, VobizXmlTestCase):
         elem = vobizxml.ResponseElement().add_wait(length=content).to_string(False)
         self.assertXmlEqual(elem,
                             '<Response><Wait length="2"/></Response>')
+
+    def test_add_dial_without_number_or_user_raises(self):
+        response = vobizxml.ResponseElement()
+        response.add_dial(time_limit=2)
+        with self.assertRaises(VobizXMLError):
+            response.to_string(False)
 
     def test_add_mpc(self):
         expected_xml = '<Response><MultiPartyCall agentHoldMusicMethod="GET" coachMode="true" ' \

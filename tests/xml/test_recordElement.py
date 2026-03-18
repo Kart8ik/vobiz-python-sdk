@@ -29,7 +29,7 @@ class RecordElementTest(TestCase, VobizXmlTestCase):
 
         element = vobizxml.ResponseElement()
         response = element.add(
-            vobizxml.RecordElement().set_action(action).set_method(method)
+                vobizxml.RecordElement(action=action).set_method(method)
             .set_file_format(fileFormat).set_redirect(redirect).set_timeout(
                 timeout).set_max_length(maxLength).set_play_beep(playBeep)
             .set_finish_on_key(finishOnKey).set_record_session(recordSession).
