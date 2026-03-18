@@ -4,6 +4,10 @@ testing.py — Vobiz SDK end-to-end sanity test
 
 Reads credentials from .env and exercises every major resource.
 Run:
+    in another terminal run 
+    ngrok http 5001 
+    
+    and then run
     python testing.py
 """
 
@@ -91,25 +95,14 @@ def start_answer_server(port=5001):
         return False
 
 
-def get_ngrok_url(port=5001, timeout=12):
+def get_ngrok_url(timeout=12):
     """
     Start ngrok tunnel on port and return the public HTTPS URL.
     Polls the ngrok local API until tunnel is ready.
     """
     import requests as req
 
-    # Kill any existing ngrok on this port first
-    subprocess.Popen(
-        ["pkill", "-f", f"ngrok http {port}"],
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-    )
     time.sleep(1)
-
-    proc = subprocess.Popen(
-        ["ngrok", "http", str(port), "--log=stdout"],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
 
     deadline = time.time() + timeout
     while time.time() < deadline:
@@ -119,13 +112,12 @@ def get_ngrok_url(port=5001, timeout=12):
             for t in tunnels:
                 url = t.get("public_url", "")
                 if url.startswith("https://"):
-                    return url, proc
+                    return url
         except Exception:
             pass
         time.sleep(1)
 
-    proc.terminate()
-    return None, proc
+    return None
 
 
 # ── main ───────────────────────────────────────────────────────────────────────
@@ -141,7 +133,7 @@ def main():
     to_number   = os.environ.get("TO_PHONE_NUMBER")
 
     # Number that is NOT assigned to any trunk — safe for attach/detach test
-    ATTACH_TEST_NUMBER = "+919240024248"
+    ATTACH_TEST_NUMBER = "+911171366943"
 
     if not auth_id or not auth_token:
         print("\n  ERROR: VOBIZ_AUTH_ID / VOBIZ_AUTH_TOKEN not set in .env")
@@ -167,7 +159,6 @@ def main():
     # ── 2b. Calls — live call: record / play / speak ────────────────────────────
     section("2b. Calls — Live Call (record / play / speak)")
 
-    ngrok_proc = None
     answer_url = None
 
     if from_number and to_number:
@@ -176,7 +167,7 @@ def main():
 
         if server_ok:
             print("  Starting ngrok tunnel...")
-            ngrok_url, ngrok_proc = get_ngrok_url(port=5001, timeout=15)
+            ngrok_url = get_ngrok_url(timeout=15)
             if ngrok_url:
                 answer_url = f"{ngrok_url}/answer"
                 print(f"  Answer URL: {answer_url}")
@@ -252,9 +243,6 @@ def main():
         skip("Live call tests (record / play / speak)",
              "FROM/TO numbers not set or ngrok failed to start")
 
-    # Clean up ngrok
-    if ngrok_proc:
-        ngrok_proc.terminate()
 
     # ── 3. Applications ─────────────────────────────────────────────────────────
     section("3. Applications")

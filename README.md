@@ -595,6 +595,12 @@ python examples/make_call.py
 
 **End-to-end live API tests** (requires valid credentials in `.env`):
 
+In another terminal (exposing port 5001 to access answer url)
+
+```bash
+ngrok http 5001
+```
+Now, run the test
 ```bash
 python testing.py
 ```
@@ -618,6 +624,7 @@ Expected output: `26/26 PASS` across 11 sections:
 pip install pytest
 pytest -q
 ```
+Expected output: `104 passed` across XML and resources
 
 ---
 

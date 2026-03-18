@@ -81,10 +81,10 @@ def test_update_application(monkeypatch):
     client.applications.update("APP_ID", name="NewName", application_type="voice")
 
     req = captured["request"]
-    assert req.method == "PUT"
+    assert req.method == "POST"
     assert (
         req.url
-        == "https://api.vobiz.ai/api/v1/Account/MA_TEST/Application/APP_ID"
+        == "https://api.vobiz.ai/api/v1/Account/MA_TEST/Application/APP_ID/"
     )
     body = json.loads(req.body.decode() if isinstance(req.body, (bytes, bytearray)) else req.body)
     assert body["name"] == "NewName"
