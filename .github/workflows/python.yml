@@ -63,4 +63,19 @@ jobs:
 
       - name: Run integration tests
         run: |
+          if [ -z "$VOBIZ_AUTH_ID" ] || [ -z "$VOBIZ_AUTH_TOKEN" ]; then
+            echo "Skipping integration tests: VOBIZ_AUTH_ID / VOBIZ_AUTH_TOKEN secrets are not set."
+            exit 0
+          fi
+
+          set +e
           pytest tests/integration -v --cov=vobiz --cov-report=term-missing
+          status=$?
+          set -e
+
+          if [ $status -eq 5 ]; then
+            echo "No integration tests were collected (pytest exit code 5); treating as non-fatal."
+            exit 0
+          fi
+
+          exit $status
