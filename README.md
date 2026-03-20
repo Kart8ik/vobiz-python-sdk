@@ -48,7 +48,7 @@ cd vobiz-python
 pip install -e .
 ```
 
-**Requires Python 3.7+**
+**Tested on Python 3.9–3.13 (CI + tox).**
 
 ---
 
@@ -615,38 +615,66 @@ python examples/make_call.py
 
 ## Running Tests
 
-**End-to-end live API tests** (requires valid credentials in `.env`):
-
-In another terminal (exposing port 5001 to access answer url)
+Install test dependencies:
 
 ```bash
-ngrok http 5001
-```
-Now, run the test
-```bash
-python testing.py
+pip install -r requirements.txt
+pip install -r test-requirements.txt
 ```
 
-Expected output: `26/26 PASS` across 11 sections:
-1. Account (get, balance, transactions, concurrency)
-2. Calls (list live, list queued)
-3. Applications (create, list, get, update, delete)
-4. Phone Numbers (list inventory)
-5. SIP Endpoints (create, list, get, update, delete)
-6. SIP Trunks (list, get)
-7. Credentials (list)
-8. IP ACLs (create, list, delete)
-9. Origination URIs (list)
-10. Recordings (list)
-11. CDRs (list)
-
-**Unit tests:**
+### Unit tests
 
 ```bash
-pip install pytest
-pytest -q
+pytest tests/ --ignore=tests/integration --cov=vobiz --cov-report=term-missing
 ```
-Expected output: `104 passed` across XML and resources
+
+### Integration tests (live API)
+
+```bash
+pytest tests/integration -v --cov=vobiz --cov-report=term-missing
+```
+
+The integration suite is in `tests/integration/test_vobiz_all_operations_integration.py` and calls SDK operations against the live API.
+
+Required credentials:
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `VOBIZ_AUTH_ID` | **Yes** | Master account Auth ID |
+| `VOBIZ_AUTH_TOKEN` | **Yes** | Master account Auth Token |
+
+Optional operation IDs and toggles (for broader coverage):
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `VOBIZ_TEST_APPLICATION_ID` | No | Existing application ID for get/update/delete tests |
+| `VOBIZ_TEST_CALL_UUID` | No | Existing live/queued call UUID for call action tests |
+| `VOBIZ_TEST_CREDENTIAL_ID` | No | Existing credential ID for get/update/delete tests |
+| `VOBIZ_TEST_ENDPOINT_ID` | No | Existing endpoint ID for get/update/delete tests |
+| `VOBIZ_TEST_ACL_ID` | No | Existing IP ACL ID for get/update/delete tests |
+| `VOBIZ_TEST_ORIGINATION_URI_ID` | No | Existing origination URI ID for get/update/delete tests |
+| `VOBIZ_TEST_RECORDING_ID` | No | Existing recording ID for get/delete tests |
+| `VOBIZ_TEST_TRUNK_ID` | No | Existing trunk ID for get/update/delete and number assignment tests |
+| `VOBIZ_TEST_SUBACCOUNT_ID` | No | Existing subaccount ID for get/update/delete tests |
+| `VOBIZ_TEST_NUMBER` | No | Existing purchased number for release/assign/unassign tests |
+| `VOBIZ_TEST_OUTBOUND_FROM` | No | Source number for live call create tests |
+| `VOBIZ_TEST_OUTBOUND_TO` | No | Destination number for live call create tests |
+| `VOBIZ_TEST_ENABLE_MUTATIONS` | No | Set `true` to enable create/update mutation paths |
+| `VOBIZ_TEST_ENABLE_DESTRUCTIVE` | No | Set `true` to enable destructive delete/bulk delete paths |
+
+### Multi-version test run with tox
+
+```bash
+tox
+```
+
+Configured environments: Python `3.9`, `3.10`, `3.11`, `3.12`, `3.13`.
+
+Run live integration via tox:
+
+```bash
+tox -e integration
+```
 
 ---
 
