@@ -6,6 +6,8 @@ on:
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: .
     strategy:
       fail-fast: false
       matrix:
@@ -25,6 +27,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r test-requirements.txt
+          pip install -e .
 
       - name: Run unit tests
         run: |
@@ -38,6 +41,7 @@ jobs:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
     env:
+      PYTHONPATH: .
       VOBIZ_AUTH_ID: ${{ secrets.VOBIZ_AUTH_ID }}
       VOBIZ_AUTH_TOKEN: ${{ secrets.VOBIZ_AUTH_TOKEN }}
 
@@ -55,6 +59,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r test-requirements.txt
+          pip install -e .
 
       - name: Run integration tests
         run: |
